@@ -337,55 +337,207 @@
     font-size: 0.95rem; color: var(--muted); max-width: 500px; line-height: 1.75; font-weight: 400;
   }
 
-  /* ─── HOW IT WORKS ─── */
-  .how-section { background: var(--bg2); }
+  /* ─── HOW IT WORKS — HORIZONTAL CARD SPREAD ─── */
+  .how-section {
+    background: var(--bg2);
+    padding-top: 100px;
+    padding-bottom: 0;
+  }
+  .how-header { margin-bottom: 64px; }
 
-  .steps-grid {
-    display: grid; grid-template-columns: repeat(3, 1fr);
-    gap: 2px; margin-top: 56px;
-    border-radius: 18px; overflow: hidden;
+  /* Tall scroll container — 3 × 80vh gives enough travel */
+  .stack-scroll-outer {
+    position: relative;
+    height: 280vh;
   }
-  .step-card {
-    background: var(--card); padding: 40px 34px;
-    position: relative; overflow: hidden;
-    transition: background 0.3s;
+  .stack-sticky {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    gap: 40px;
   }
-  .step-card:hover { background: var(--card2); }
-  .step-num {
+
+  /* The row that holds all three cards */
+  .stack-frame {
+    position: relative;
+    width: 100%;
+    max-width: 1200px;
+    padding: 0 56px;
+    display: flex;
+    gap: 20px;
+    align-items: stretch;
+  }
+
+  /* Individual card — starts stacked centre, spreads sideways */
+  .scard {
+    flex: 1;
+    min-width: 0;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 36px 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    will-change: transform, opacity;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.45);
+    /* JS drives transform — tiny CSS transition smooths each rAF step */
+    transition: transform 0.06s linear, opacity 0.06s linear, box-shadow 0.3s;
+  }
+  .scard:hover {
+    box-shadow: 0 32px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(0,255,135,0.1);
+  }
+
+  /* Step label row */
+  .scard-step-label {
     font-family: 'DM Mono', monospace;
-    font-size: 0.66rem; color: var(--green);
-    letter-spacing: 0.07em; margin-bottom: 22px;
-  }
-  .step-icon-svg {
-    width: 36px; height: 36px; margin-bottom: 18px; display: block;
+    font-size: 0.62rem;
     color: var(--green);
+    letter-spacing: 0.1em;
+    margin-bottom: 20px;
+    display: block;
   }
-  .step-title {
+  /* Thin top accent line that fills as card enters */
+  .scard-line {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--border);
+    border-radius: 20px 20px 0 0;
+    overflow: hidden;
+  }
+  .scard-line-fill {
+    position: absolute;
+    top: 0; left: 0;
+    height: 100%; width: 0%;
+    background: var(--green);
+    border-radius: inherit;
+    transition: width 0.5s ease;
+  }
+
+  /* Icon */
+  .scard-icon {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(0,255,135,0.06);
+    border: 1px solid rgba(0,255,135,0.12);
+    color: var(--green);
+    margin-bottom: 20px;
+    flex-shrink: 0;
+  }
+  .scard-title {
     font-family: 'Fraunces', serif;
     font-size: 1.2rem; font-weight: 600;
-    margin-bottom: 12px; line-height: 1.25;
+    letter-spacing: -0.02em; line-height: 1.25;
+    margin-bottom: 12px;
   }
-  .step-desc { font-size: 0.85rem; color: var(--muted); line-height: 1.7; font-weight: 400; }
-  .step-bar {
-    position: absolute; bottom: 0; left: 0; right: 0;
-    height: 1.5px; background: var(--border);
+  .scard-desc {
+    font-size: 0.85rem; color: var(--muted);
+    line-height: 1.72; font-weight: 400;
   }
-  .step-bar-fill {
-    height: 100%; width: 0;
-    background: var(--green);
-    transition: width 0.7s ease;
-  }
-  .step-card:hover .step-bar-fill { width: 100%; }
+  /* Remove old spine styles — no longer used */
+  .scard-spine { display: none; }
+  .scard-body { flex: 1; }
 
-  /* ─── SIM TRADING ─── */
+  /* Progress dots row below cards */
+  .stack-dots {
+    display: flex; gap: 8px;
+    align-items: center;
+  }
+  .stack-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--border);
+    transition: background 0.3s, transform 0.3s, width 0.3s;
+  }
+  .stack-dot.active {
+    background: var(--green);
+    transform: scale(1.2);
+    width: 20px;
+    border-radius: 3px;
+  }
+
+  /* Scroll hint text */
+  .stack-hint {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem; color: var(--muted);
+    letter-spacing: 0.08em;
+    opacity: 0;
+    animation: fadeHint 0.6s 1.2s forwards;
+  }
+  @keyframes fadeHint { to { opacity: 1; } }
+
+  /* Extra bottom padding after sticky section */
+  .stack-end-pad { height: 80px; background: var(--bg2); }
+
+  /* ─── SIM TRADING — 2.5D PARALLAX ─── */
   .sim-section {
     display: grid; grid-template-columns: 1fr 1fr; gap: 72px;
     align-items: center;
+    position: relative;
+  }
+  /* Wrap holds frame + floating badges, enabling relative stacking */
+  .sim-parallax-wrap {
+    position: relative;
   }
   .sim-ui {
     background: var(--card); border: 1px solid var(--border);
     border-radius: 18px; overflow: hidden;
+    position: relative; z-index: 1;
+    will-change: transform;
   }
+  /* Floating parallax badges — sit above the card, move faster on scroll */
+  .parallax-badge {
+    position: absolute;
+    z-index: 10;
+    pointer-events: none;
+    will-change: transform;
+    transition: transform 0.05s linear;
+  }
+  .parallax-badge.badge-profit {
+    top: -22px; right: -20px;
+    background: var(--card2);
+    border: 1px solid rgba(0,255,135,0.2);
+    border-radius: 12px;
+    padding: 10px 16px;
+    backdrop-filter: blur(16px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4), 0 0 0 1px rgba(0,255,135,0.06);
+  }
+  .parallax-badge.badge-xp {
+    bottom: -18px; left: -16px;
+    background: var(--card2);
+    border: 1px solid rgba(0,255,135,0.15);
+    border-radius: 12px;
+    padding: 10px 16px;
+    backdrop-filter: blur(16px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  }
+  .badge-profit-value {
+    font-family: 'Fraunces', serif;
+    font-size: 1.1rem; font-weight: 600;
+    color: var(--green); letter-spacing: -0.02em;
+  }
+  .badge-profit-label {
+    font-size: 0.62rem; color: var(--muted);
+    letter-spacing: 0.04em; margin-top: 1px;
+  }
+  .badge-xp-row {
+    display: flex; align-items: center; gap: 8px;
+  }
+  .badge-xp-pill {
+    background: rgba(0,255,135,0.12);
+    border: 1px solid rgba(0,255,135,0.2);
+    color: var(--green);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem; font-weight: 500;
+    padding: 3px 9px; border-radius: 100px;
+  }
+  .badge-xp-label { font-size: 0.75rem; color: var(--muted); }
   .sim-header {
     padding: 16px 22px; border-bottom: 1px solid var(--border);
     display: flex; align-items: center; justify-content: space-between;
@@ -616,12 +768,152 @@
   .footer-links a { font-size: 0.72rem; color: var(--muted); text-decoration: none; transition: color 0.2s; }
   .footer-links a:hover { color: var(--white); }
 
-  /* ─── SCROLL REVEAL ─── */
+  /* ═══════════════════════════════════════════════════
+     CINEMATIC SCROLL SYSTEM
+     ═══════════════════════════════════════════════════ */
+
+  /* Base hidden state — everything starts invisible */
+  .reveal, .reveal-left, .reveal-right, .reveal-scale,
+  .reveal-eyebrow, .reveal-line, .count-up {
+    opacity: 0;
+  }
+
+  /* --- FADE + RISE (default) --- */
   .reveal {
-    opacity: 0; transform: translateY(28px);
-    transition: opacity 0.7s ease, transform 0.7s ease;
+    transform: translateY(48px);
+    transition:
+      opacity  0.9s cubic-bezier(0.16, 1, 0.3, 1),
+      transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
   }
   .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* --- SLIDE FROM LEFT --- */
+  .reveal-left {
+    transform: translateX(-60px);
+    transition:
+      opacity  1s cubic-bezier(0.16, 1, 0.3, 1),
+      transform 1s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .reveal-left.visible { opacity: 1; transform: translateX(0); }
+
+  /* --- SLIDE FROM RIGHT --- */
+  .reveal-right {
+    transform: translateX(60px);
+    transition:
+      opacity  1s cubic-bezier(0.16, 1, 0.3, 1),
+      transform 1s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .reveal-right.visible { opacity: 1; transform: translateX(0); }
+
+  /* --- SCALE UP --- */
+  .reveal-scale {
+    transform: scale(0.88) translateY(20px);
+    filter: blur(2px);
+    transition:
+      opacity  0.8s cubic-bezier(0.16, 1, 0.3, 1),
+      transform 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+      filter   0.6s ease;
+  }
+  .reveal-scale.visible { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); }
+
+  /* --- STAGGER DELAYS (feature cards cascade) --- */
+  .stagger-0 { transition-delay: 0ms !important; }
+  .stagger-1 { transition-delay: 90ms !important; }
+  .stagger-2 { transition-delay: 180ms !important; }
+  .stagger-3 { transition-delay: 270ms !important; }
+  .stagger-4 { transition-delay: 360ms !important; }
+  .stagger-5 { transition-delay: 450ms !important; }
+
+  /* --- EYEBROW CLIP --- */
+  .reveal-eyebrow {
+    transform: translateY(10px);
+    transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.16,1,0.3,1);
+  }
+  .reveal-eyebrow.visible { opacity: 1; transform: translateY(0); }
+
+  /* --- GREEN LINE EXPAND --- */
+  .reveal-line {
+    display: block; width: 0; height: 1px;
+    background: var(--green); opacity: 0.3; margin: 14px 0 0;
+    transition: width 1.1s cubic-bezier(0.16, 1, 0.3, 1) 0.2s, opacity 0.4s ease 0.2s;
+  }
+  .reveal-line.visible { width: 48px; opacity: 0.3; }
+
+  /* --- SECTION TITLE WORD-BY-WORD REVEAL --- */
+  .word-reveal-wrap {
+    overflow: hidden;
+    display: inline;
+  }
+  .word-reveal {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(100%) rotate(3deg);
+    transition:
+      opacity  0.7s cubic-bezier(0.16, 1, 0.3, 1),
+      transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .word-reveal.visible { opacity: 1; transform: translateY(0) rotate(0deg); }
+
+  /* --- CINEMATIC SECTION TRANSITION GLOW --- */
+  @keyframes sectionGlow {
+    from { opacity: 0; transform: scaleX(0); }
+    to   { opacity: 1; transform: scaleX(1); }
+  }
+  .section-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--green), transparent);
+    opacity: 0;
+    transform: scaleX(0);
+    transform-origin: left;
+  }
+  .section-divider.visible {
+    animation: sectionGlow 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  /* --- HERO WORD SPLIT ANIMATION --- */
+  .hero-word {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(60px) skewY(4deg);
+    transition:
+      opacity  0.8s cubic-bezier(0.16, 1, 0.3, 1),
+      transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .hero-word.in { opacity: 1; transform: translateY(0) skewY(0deg); }
+
+  /* --- STAT COUNTER WRAPPER --- */
+  .stat-wrap {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.16,1,0.3,1);
+  }
+  .stat-wrap.visible { opacity: 1; transform: translateY(0); }
+
+  /* --- CHECK LIST ITEMS hidden by default for JS stagger --- */
+  .check-list li {
+    opacity: 0;
+    transform: translateX(-16px);
+    transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.16,1,0.3,1);
+  }
+  .check-list li.visible { opacity: 1; transform: translateX(0); }
+
+  /* --- FLOATING XP BADGE PULSE --- */
+  @keyframes badgePop {
+    0%   { transform: scale(0.6) translateY(8px); opacity: 0; }
+    60%  { transform: scale(1.08) translateY(-2px); opacity: 1; }
+    100% { transform: scale(1) translateY(0); opacity: 1; }
+  }
+  .parallax-badge {
+    opacity: 0;
+  }
+  .parallax-badge.badge-popped {
+    animation: badgePop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  }
+
+  /* --- SMOOTH SECTION BACKGROUND CROSSFADE --- */
+  section {
+    will-change: opacity;
+  }
 
   /* ─── RESPONSIVE ─── */
   @media (max-width: 920px) {
@@ -630,10 +922,19 @@
     .nav-links { display: none; }
     .hero { flex-direction: column; padding: 100px 24px 80px; }
     section { padding: 80px 24px; }
-    .steps-grid, .features-grid { grid-template-columns: 1fr; }
+    .features-grid { grid-template-columns: 1fr; }
     .sim-section, .lessons-section { grid-template-columns: 1fr; gap: 48px; }
     footer { flex-direction: column; gap: 16px; text-align: center; padding: 28px 24px 72px; }
     .float-card { display: none; }
+    /* Card spread mobile — stack vertically, no scroll animation */
+    .how-header { padding: 0 24px !important; }
+    .stack-scroll-outer { height: auto; }
+    .stack-sticky { position: relative; height: auto; padding: 40px 24px 48px; gap: 16px; }
+    .stack-frame { flex-direction: column; padding: 0; gap: 16px; }
+    .scard { transform: none !important; opacity: 1 !important; }
+    .scard-line-fill { width: 100% !important; }
+    /* Parallax badges mobile — simpler, no float offset */
+    .parallax-badge { display: none; }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -693,15 +994,15 @@
     </div>
 
     <div class="hero-stats">
-      <div>
-        <span class="stat-num">2,400+</span>
+      <div class="stat-wrap" style="transition-delay:0ms">
+        <span class="stat-num" data-count="2400" data-suffix="+" data-prefix="">2,400+</span>
         <span class="stat-label">on waitlist</span>
       </div>
-      <div>
+      <div class="stat-wrap" style="transition-delay:100ms">
         <span class="stat-num">Free</span>
         <span class="stat-label">to start</span>
       </div>
-      <div>
+      <div class="stat-wrap" style="transition-delay:200ms">
         <span class="stat-num">BSE/NSE</span>
         <span class="stat-label">live market data</span>
       </div>
@@ -747,142 +1048,182 @@
   </div>
 </section>
 
-<!-- HOW IT WORKS -->
+<!-- HOW IT WORKS — HORIZONTAL CARD SPREAD -->
 <section class="how-section" id="how">
-  <div class="reveal">
+  <div class="how-header reveal" style="padding: 0 56px;">
     <div class="section-eyebrow">How it works</div>
     <h2 class="section-title">Learn. Trade. <em>Level up.</em></h2>
     <p class="section-sub">Three loops that reinforce each other — so knowledge actually sticks, not just gets memorized and forgotten.</p>
   </div>
 
-  <div class="steps-grid reveal" style="transition-delay:0.18s">
-    <!-- Step 1: Learn -->
-    <div class="step-card">
-      <div class="step-num">01 / LEARN</div>
-      <svg class="step-icon-svg" viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M18 4L4 11V18C4 25.7 10.3 31.4 18 33C25.7 31.4 32 25.7 32 18V11L18 4Z"/>
-        <path d="M13 18L16.5 21.5L23 15"/>
-      </svg>
-      <div class="step-title">Socratic lessons that ask first</div>
-      <p class="step-desc">We don't lecture. Minty asks you questions, you figure it out. Duolingo-style streaks keep you coming back. From SIPs to Sensex — explained like you're 14.</p>
-      <div class="step-bar"><div class="step-bar-fill"></div></div>
-    </div>
+  <div class="stack-scroll-outer" id="stackOuter">
+    <div class="stack-sticky">
 
-    <!-- Step 2: Trade -->
-    <div class="step-card">
-      <div class="step-num">02 / TRADE</div>
-      <svg class="step-icon-svg" viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M4 26L11 18L16 22L23 12L32 18"/>
-        <path d="M28 10H32V14"/>
-        <circle cx="4" cy="26" r="2" fill="currentColor" stroke="none"/>
-      </svg>
-      <div class="step-title">Sim portfolio with real BSE/NSE data</div>
-      <p class="step-desc">Start with ₹1,00,000 in virtual money. Buy Reliance, Tata Motors, HDFC. Watch it move with real prices. Feel the rush — without your parents' savings.</p>
-      <div class="step-bar"><div class="step-bar-fill"></div></div>
-    </div>
+      <div class="stack-frame" id="stackFrame">
 
-    <!-- Step 3: Compete -->
-    <div class="step-card">
-      <div class="step-num">03 / COMPETE</div>
-      <svg class="step-icon-svg" viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M18 4L21.5 13.5H32L23.5 19.5L26.5 29L18 23L9.5 29L12.5 19.5L4 13.5H14.5L18 4Z"/>
-      </svg>
-      <div class="step-title">Weekly leagues against real teens</div>
-      <p class="step-desc">Whose portfolio grew the most this week? Leaderboards, challenges, and Minty badges. Competition makes lessons real. Bragging rights included.</p>
-      <div class="step-bar"><div class="step-bar-fill"></div></div>
-    </div>
-  </div>
+        <!-- Card 01 -->
+        <div class="scard" id="scard-0" style="position:relative">
+          <div class="scard-line"><div class="scard-line-fill" id="fill-0"></div></div>
+          <span class="scard-step-label">01 / LEARN</span>
+          <div class="scard-icon">
+            <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M11 2L3 6.5V12C3 16.1 6.5 19.8 11 21C15.5 19.8 19 16.1 19 12V6.5L11 2Z"/>
+              <path d="M8 11L10.5 13.5L14.5 9.5"/>
+            </svg>
+          </div>
+          <div class="scard-title">Socratic lessons that ask first</div>
+          <p class="scard-desc">We don't lecture. Minty asks you questions, you figure it out. Duolingo-style streaks keep you coming back. From SIPs to Sensex — explained like you're 14.</p>
+        </div>
+
+        <!-- Card 02 -->
+        <div class="scard" id="scard-1" style="position:relative">
+          <div class="scard-line"><div class="scard-line-fill" id="fill-1"></div></div>
+          <span class="scard-step-label">02 / TRADE</span>
+          <div class="scard-icon">
+            <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 16L8 10L12 13L17 7L21 11"/>
+              <path d="M18 6H21V9"/>
+            </svg>
+          </div>
+          <div class="scard-title">Sim portfolio with real BSE/NSE data</div>
+          <p class="scard-desc">Start with ₹1,00,000 in virtual money. Buy Reliance, Tata Motors, HDFC. Watch it move with real prices. Feel the rush — without your parents' savings.</p>
+        </div>
+
+        <!-- Card 03 -->
+        <div class="scard" id="scard-2" style="position:relative">
+          <div class="scard-line"><div class="scard-line-fill" id="fill-2"></div></div>
+          <span class="scard-step-label">03 / COMPETE</span>
+          <div class="scard-icon">
+            <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M11 2L13.5 8.5H20.5L14.8 12.5L16.9 19L11 15L5.1 19L7.2 12.5L1.5 8.5H8.5L11 2Z"/>
+            </svg>
+          </div>
+          <div class="scard-title">Weekly leagues against real teens</div>
+          <p class="scard-desc">Whose portfolio grew the most this week? Leaderboards, challenges, and Minty badges. Competition makes lessons real. Bragging rights included.</p>
+        </div>
+
+      </div><!-- /stack-frame -->
+
+      <!-- Dots + hint below the cards -->
+      <div class="stack-dots">
+        <div class="stack-dot active" id="dot-0"></div>
+        <div class="stack-dot" id="dot-1"></div>
+        <div class="stack-dot" id="dot-2"></div>
+      </div>
+
+    </div><!-- /stack-sticky -->
+  </div><!-- /stack-scroll-outer -->
+
+  <div class="stack-end-pad"></div>
 </section>
 
 <!-- SIM TRADING -->
 <section id="features" style="background:var(--bg)">
   <div class="sim-section">
-    <div class="sim-ui reveal">
-      <div class="sim-header">
-        <div class="sim-title-bar">
-          <div class="dot dot-r"></div>
-          <div class="dot dot-y"></div>
-          <div class="dot dot-g"></div>
-        </div>
-        <div class="sim-tab-label">PORTFOLIO · LIVE</div>
-      </div>
-      <div class="portfolio-summary">
-        <div>
-          <div class="port-value-label">SIM PORTFOLIO VALUE</div>
-          <div class="port-value">₹1,08,420</div>
-          <div class="port-change">↑ ₹12,050 this month · +12.5%</div>
-        </div>
-        <div class="mini-chart">
-          <div class="bar" style="height:42%"></div>
-          <div class="bar" style="height:52%"></div>
-          <div class="bar" style="height:48%"></div>
-          <div class="bar" style="height:63%"></div>
-          <div class="bar" style="height:58%"></div>
-          <div class="bar" style="height:70%"></div>
-          <div class="bar" style="height:66%"></div>
-          <div class="bar" style="height:78%"></div>
-          <div class="bar" style="height:74%"></div>
-          <div class="bar" style="height:88%"></div>
-          <div class="bar" style="height:100%"></div>
-        </div>
-      </div>
-      <div class="stock-list">
-        <div class="stock-item">
-          <div class="stock-left">
-            <div class="stock-logo" style="background:rgba(0,112,209,0.13);color:#5AA8E8">RELI</div>
-            <div>
-              <div class="stock-name">Reliance Industries</div>
-              <div class="stock-shares">14 shares</div>
-            </div>
-          </div>
-          <div class="stock-right">
-            <div class="stock-price">₹2,847</div>
-            <div class="stock-pct up">+3.2%</div>
-          </div>
-        </div>
-        <div class="stock-item">
-          <div class="stock-left">
-            <div class="stock-logo" style="background:rgba(0,150,100,0.13);color:#4DC99A">INFY</div>
-            <div>
-              <div class="stock-name">Infosys</div>
-              <div class="stock-shares">22 shares</div>
-            </div>
-          </div>
-          <div class="stock-right">
-            <div class="stock-price">₹1,543</div>
-            <div class="stock-pct up">+1.8%</div>
-          </div>
-        </div>
-        <div class="stock-item">
-          <div class="stock-left">
-            <div class="stock-logo" style="background:rgba(200,50,50,0.13);color:#E06060">TATA</div>
-            <div>
-              <div class="stock-name">Tata Motors</div>
-              <div class="stock-shares">35 shares</div>
-            </div>
-          </div>
-          <div class="stock-right">
-            <div class="stock-price">₹938</div>
-            <div class="stock-pct down">−0.9%</div>
-          </div>
-        </div>
-        <div class="stock-item">
-          <div class="stock-left">
-            <div class="stock-logo" style="background:rgba(200,120,0,0.13);color:#D4A030">HDFC</div>
-            <div>
-              <div class="stock-name">HDFC Bank</div>
-              <div class="stock-shares">8 shares</div>
-            </div>
-          </div>
-          <div class="stock-right">
-            <div class="stock-price">₹1,691</div>
-            <div class="stock-pct up">+0.5%</div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <div class="sim-parallax-wrap reveal-left" id="simParallaxWrap">
 
-    <div class="reveal" style="transition-delay:0.22s">
+      <!-- Floating parallax badge: profit -->
+      <div class="parallax-badge badge-profit" id="pBadgeProfit">
+        <div class="badge-profit-value">+₹12,050</div>
+        <div class="badge-profit-label">THIS MONTH · +12.5%</div>
+      </div>
+
+      <div class="sim-ui">
+        <div class="sim-header">
+          <div class="sim-title-bar">
+            <div class="dot dot-r"></div>
+            <div class="dot dot-y"></div>
+            <div class="dot dot-g"></div>
+          </div>
+          <div class="sim-tab-label">PORTFOLIO · LIVE</div>
+        </div>
+        <div class="portfolio-summary">
+          <div>
+            <div class="port-value-label">SIM PORTFOLIO VALUE</div>
+            <div class="port-value">₹1,08,420</div>
+            <div class="port-change">↑ ₹12,050 this month · +12.5%</div>
+          </div>
+          <div class="mini-chart">
+            <div class="bar" style="height:42%"></div>
+            <div class="bar" style="height:52%"></div>
+            <div class="bar" style="height:48%"></div>
+            <div class="bar" style="height:63%"></div>
+            <div class="bar" style="height:58%"></div>
+            <div class="bar" style="height:70%"></div>
+            <div class="bar" style="height:66%"></div>
+            <div class="bar" style="height:78%"></div>
+            <div class="bar" style="height:74%"></div>
+            <div class="bar" style="height:88%"></div>
+            <div class="bar" style="height:100%"></div>
+          </div>
+        </div>
+        <div class="stock-list">
+          <div class="stock-item">
+            <div class="stock-left">
+              <div class="stock-logo" style="background:rgba(0,112,209,0.13);color:#5AA8E8">RELI</div>
+              <div>
+                <div class="stock-name">Reliance Industries</div>
+                <div class="stock-shares">14 shares</div>
+              </div>
+            </div>
+            <div class="stock-right">
+              <div class="stock-price">₹2,847</div>
+              <div class="stock-pct up">+3.2%</div>
+            </div>
+          </div>
+          <div class="stock-item">
+            <div class="stock-left">
+              <div class="stock-logo" style="background:rgba(0,150,100,0.13);color:#4DC99A">INFY</div>
+              <div>
+                <div class="stock-name">Infosys</div>
+                <div class="stock-shares">22 shares</div>
+              </div>
+            </div>
+            <div class="stock-right">
+              <div class="stock-price">₹1,543</div>
+              <div class="stock-pct up">+1.8%</div>
+            </div>
+          </div>
+          <div class="stock-item">
+            <div class="stock-left">
+              <div class="stock-logo" style="background:rgba(200,50,50,0.13);color:#E06060">TATA</div>
+              <div>
+                <div class="stock-name">Tata Motors</div>
+                <div class="stock-shares">35 shares</div>
+              </div>
+            </div>
+            <div class="stock-right">
+              <div class="stock-price">₹938</div>
+              <div class="stock-pct down">−0.9%</div>
+            </div>
+          </div>
+          <div class="stock-item">
+            <div class="stock-left">
+              <div class="stock-logo" style="background:rgba(200,120,0,0.13);color:#D4A030">HDFC</div>
+              <div>
+                <div class="stock-name">HDFC Bank</div>
+                <div class="stock-shares">8 shares</div>
+              </div>
+            </div>
+            <div class="stock-right">
+              <div class="stock-price">₹1,691</div>
+              <div class="stock-pct up">+0.5%</div>
+            </div>
+          </div>
+        </div>
+      </div><!-- /sim-ui -->
+
+      <!-- Floating parallax badge: XP -->
+      <div class="parallax-badge badge-xp" id="pBadgeXP">
+        <div class="badge-xp-row">
+          <span class="badge-xp-pill">+40 XP</span>
+          <span class="badge-xp-label">Lesson completed</span>
+        </div>
+      </div>
+
+    </div><!-- /sim-parallax-wrap -->
+
+    <div class="reveal-right" style="transition-delay:0.1s">
       <div class="section-eyebrow">Sim Trading</div>
       <h2 class="section-title">Real stocks.<br><em>Zero risk.</em></h2>
       <p class="section-sub" style="margin-bottom:26px">
@@ -913,7 +1254,7 @@
 <!-- LESSONS -->
 <section id="lessons" style="background:var(--bg2)">
   <div class="lessons-section">
-    <div class="reveal" style="transition-delay:0.1s">
+    <div class="reveal-left" style="transition-delay:0.1s">
       <div class="section-eyebrow">Duolingo-style lessons</div>
       <h2 class="section-title"><em>Questions first.</em><br>Theory never.</h2>
       <p class="section-sub" style="margin-bottom:26px">
@@ -939,7 +1280,7 @@
       </ul>
     </div>
 
-    <div class="lesson-cards-stack reveal" style="transition-delay:0.28s">
+    <div class="lesson-cards-stack reveal-right" style="transition-delay:0.22s">
       <div class="lesson-card-demo behind2"></div>
       <div class="lesson-card-demo behind"></div>
       <div class="lesson-card-demo" id="lesson-card">
@@ -975,9 +1316,9 @@
     <div class="section-eyebrow">Everything included</div>
     <h2 class="section-title">Built for the <em>next<br>generation</em> of investors.</h2>
   </div>
-  <div class="features-grid reveal" style="transition-delay:0.16s">
+  <div class="features-grid" id="featuresGrid">
 
-    <div class="feature-card">
+    <div class="feature-card reveal-scale stagger-0">
       <div class="feature-icon">
         <!-- Indian flag / map icon -->
         <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
@@ -989,7 +1330,7 @@
       <p class="feature-desc">Learn with Sensex, Nifty 50, and the brands you already know — Tata, Zomato, Paytm. No American stocks to confuse the picture.</p>
     </div>
 
-    <div class="feature-card">
+    <div class="feature-card reveal-scale stagger-1">
       <div class="feature-icon">
         <!-- Game controller icon -->
         <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
@@ -1002,7 +1343,7 @@
       <p class="feature-desc">Streaks, XP, badges, leaderboards. Learning finance should feel like a game — because then you actually do it every day.</p>
     </div>
 
-    <div class="feature-card">
+    <div class="feature-card reveal-scale stagger-2">
       <div class="feature-icon">
         <!-- Family / people icon -->
         <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
@@ -1017,7 +1358,7 @@
       <p class="feature-desc">Parents see exactly what their teen is learning. No surprises. Progress reports, lesson summaries, and weekly portfolio snapshots.</p>
     </div>
 
-    <div class="feature-card">
+    <div class="feature-card reveal-scale stagger-3">
       <div class="feature-icon">
         <!-- Lock icon -->
         <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
@@ -1030,7 +1371,7 @@
       <p class="feature-desc">100% simulated. No payments, no in-app purchases, no risk. Just the mindset of an investor, built safely before the stakes are real.</p>
     </div>
 
-    <div class="feature-card">
+    <div class="feature-card reveal-scale stagger-4">
       <div class="feature-icon">
         <!-- Newspaper / feed icon -->
         <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
@@ -1042,7 +1383,7 @@
       <p class="feature-desc">When RBI hikes rates or a company releases earnings, Minty explains what it means for your portfolio — in language that actually makes sense.</p>
     </div>
 
-    <div class="feature-card">
+    <div class="feature-card reveal-scale stagger-5">
       <div class="feature-icon">
         <!-- AI / bot icon -->
         <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
@@ -1061,8 +1402,8 @@
 </section>
 
 <!-- SOCIAL PROOF -->
-<section class="proof-section reveal" style="padding:80px 56px">
-  <div class="proof-avatars">
+<section class="proof-section" style="padding:80px 56px">
+  <div class="proof-avatars reveal">
     <div class="proof-avatar" style="font-size:1rem;background:#2A3D2E">👦</div>
     <div class="proof-avatar" style="font-size:1rem;background:#243828">👧</div>
     <div class="proof-avatar" style="font-size:1rem;background:#2A3D2E">🧑</div>
@@ -1145,19 +1486,65 @@
 </div>
 
 <script>
-  // Nav scroll shrink
+  // ── Nav scroll shrink
   const nav = document.getElementById('nav');
   window.addEventListener('scroll', () => {
     nav.classList.toggle('scrolled', window.scrollY > 60);
   }, { passive: true });
 
-  // Scroll reveal
-  const io = new IntersectionObserver((entries) => {
-    entries.forEach(e => {
-      if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); }
-    });
-  }, { threshold: 0.1 });
-  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+  // ── NUMBER COUNTUP
+  function animateCount(el) {
+    if (el._counted) return;
+    el._counted = true;
+    const target   = parseInt(el.dataset.count, 10);
+    const suffix   = el.dataset.suffix || '';
+    const duration = 1600;
+    const start    = performance.now();
+    function easeOutQuart(t) { return 1 - Math.pow(1 - t, 4); }
+    function tick(now) {
+      const elapsed  = now - start;
+      const progress = Math.min(elapsed / duration, 1);
+      const value    = Math.round(easeOutQuart(progress) * target);
+      el.textContent = value.toLocaleString('en-IN') + suffix;
+      if (progress < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  }
+
+  // ── UNIFIED SCROLL REVEAL — covers all variant classes
+  (function initReveal() {
+    const sel = '.reveal, .reveal-left, .reveal-right, .reveal-scale, .reveal-eyebrow, .reveal-line';
+    const els = document.querySelectorAll(sel);
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        const el = entry.target;
+        el.classList.add('visible');
+
+        // Animate any [data-count] descendants
+        el.querySelectorAll('[data-count]').forEach(animateCount);
+
+        // Stagger check-list <li> items
+        el.querySelectorAll('.check-list li').forEach((li, i) => {
+          li.style.cssText = `opacity:0;transform:translateX(-14px);transition:opacity 0.45s ease ${i*75}ms,transform 0.5s cubic-bezier(0.22,1,0.36,1) ${i*75}ms`;
+          requestAnimationFrame(() => requestAnimationFrame(() => {
+            li.style.opacity = '1';
+            li.style.transform = 'translateX(0)';
+          }));
+        });
+
+        observer.unobserve(el);
+      });
+    }, { threshold: 0.09, rootMargin: '0px 0px -36px 0px' });
+
+    els.forEach(el => observer.observe(el));
+
+    // Hero stat countup fires on load after hero animation settles
+    setTimeout(() => {
+      document.querySelectorAll('.stat-num[data-count]').forEach(animateCount);
+    }, 1100);
+  })();
 
   // Waitlist scroll
   function scrollToWaitlist() {
@@ -1191,7 +1578,7 @@
     showToast('+1 on the list');
   }
 
-  // Socratic lesson interaction
+  // ── Socratic lesson interaction
   let answered = false;
   function answerLesson(el, correct) {
     if (answered) return;
@@ -1204,7 +1591,7 @@
       el.classList.add('wrong');
       el.querySelector('.lesson-opt-letter').style.cssText = 'background:var(--red);color:white';
       const correctEl = document.querySelector('.lesson-opt.correct');
-      if (correctEl) { correctEl.style.borderColor = 'rgba(0,255,135,0.4)'; }
+      if (correctEl) correctEl.style.borderColor = 'rgba(0,255,135,0.4)';
     }
     setTimeout(() => {
       answered = false;
@@ -1216,38 +1603,196 @@
     }, 2800);
   }
 
-  // Toast notification
+  // ── Toast
   function showToast(msg) {
     const t = document.createElement('div');
     t.textContent = msg;
     t.style.cssText = [
-      'position:fixed', 'top:80px', 'right:24px', 'z-index:9999',
-      'background:var(--green)', 'color:#060B08',
-      'font-family:"DM Sans",sans-serif', 'font-weight:600', 'font-size:0.85rem',
-      'padding:11px 20px', 'border-radius:10px',
+      'position:fixed','top:80px','right:24px','z-index:9999',
+      'background:var(--green)','color:#060B08',
+      'font-family:"DM Sans",sans-serif','font-weight:600','font-size:0.85rem',
+      'padding:11px 20px','border-radius:10px',
       'box-shadow:0 8px 28px rgba(0,255,135,0.32)',
-      'transform:translateY(-6px)', 'opacity:0',
+      'transform:translateY(-6px)','opacity:0',
       'transition:all 0.25s ease',
     ].join(';');
     document.body.appendChild(t);
-    requestAnimationFrame(() => {
-      t.style.transform = 'translateY(0)';
-      t.style.opacity = '1';
-    });
+    requestAnimationFrame(() => { t.style.transform = 'translateY(0)'; t.style.opacity = '1'; });
     setTimeout(() => {
-      t.style.opacity = '0';
-      t.style.transform = 'translateY(-8px)';
+      t.style.opacity = '0'; t.style.transform = 'translateY(-8px)';
       setTimeout(() => t.remove(), 300);
     }, 2000);
   }
 
-  // Stock price flicker
+  // ── Stock price flicker
   setInterval(() => {
     document.querySelectorAll('.stock-price').forEach(p => {
       p.style.opacity = '0.5';
       setTimeout(() => { p.style.opacity = '1'; }, 180);
     });
   }, 3500);
+
+  // ═══════════════════════════════════════════════════════
+  // EFFECT 1 — HORIZONTAL CARD SPREAD (How it works)
+  // Cards start stacked in the centre, fan out left→right as you scroll.
+  // By the end all three sit side by side.
+  // ═══════════════════════════════════════════════════════
+  const stackOuter = document.getElementById('stackOuter');
+  const scards = [
+    document.getElementById('scard-0'),
+    document.getElementById('scard-1'),
+    document.getElementById('scard-2'),
+  ];
+  const sdots = [
+    document.getElementById('dot-0'),
+    document.getElementById('dot-1'),
+    document.getElementById('dot-2'),
+  ];
+  const sfills = [
+    document.getElementById('fill-0'),
+    document.getElementById('fill-1'),
+    document.getElementById('fill-2'),
+  ];
+
+  // Each card's resting X offset when fully spread, relative to centre.
+  // Cards are flex children so their natural position IS the spread state.
+  // We start them all collapsed to the centre by translating them toward it,
+  // then animate those translations back to 0 as we scroll.
+  //
+  // Strategy: measure each card's centre offset from the row's centre,
+  // then apply an inverse translateX that shrinks to 0 as progress → 1.
+
+  let cardOffsets = [0, 0, 0]; // how far each card is from the row centre
+
+  function measureOffsets() {
+    const frame = document.getElementById('stackFrame');
+    if (!frame || !scards[0]) return;
+    const frameRect  = frame.getBoundingClientRect();
+    const frameCentreX = frameRect.left + frameRect.width / 2;
+    scards.forEach((card, i) => {
+      const r = card.getBoundingClientRect();
+      const cardCentreX = r.left + r.width / 2;
+      cardOffsets[i] = cardCentreX - frameCentreX; // positive = right of centre
+    });
+  }
+
+  function initSpread() {
+    // Before first measurement, collapse everything to centre
+    scards.forEach(card => {
+      card.style.transform = 'translateX(0px) translateY(20px)';
+      card.style.opacity   = '0';
+    });
+    sfills.forEach(f => { f.style.width = '0%'; });
+  }
+  initSpread();
+
+  // Run measure after layout settles
+  requestAnimationFrame(() => requestAnimationFrame(measureOffsets));
+  window.addEventListener('resize', measureOffsets);
+
+  function updateSpread(progress) {
+    // progress 0→1 across the full stackOuter scroll range
+    // Phase A (0→0.15): first card fades in from centre, no spread yet
+    // Phase B (0.15→0.55): cards 1 and 2 reveal and spread begins
+    // Phase C (0.55→1.0): all three fully spread, accent lines fill
+
+    const N = scards.length;
+
+    scards.forEach((card, i) => {
+      // Each card reveals at a staggered threshold
+      const revealAt  = i * 0.2;          // 0, 0.2, 0.4
+      const fullAt    = revealAt + 0.35;   // 0.35, 0.55, 0.75
+
+      // local: 0 (not yet revealed) → 1 (fully in position)
+      const local = Math.max(0, Math.min(1, (progress - revealAt) / (fullAt - revealAt)));
+
+      // easeOutCubic for snappy feel
+      const eased = 1 - Math.pow(1 - local, 3);
+
+      // Translate from centre → final position
+      const offset = cardOffsets[i] || 0;
+      const tx = offset * (eased - 1); // starts at -offset (at centre), ends at 0 (natural pos)
+      const ty = (1 - eased) * 40;     // subtle rise from below
+      const op = eased;
+      const sc = 0.88 + eased * 0.12;  // scale from 0.88 → 1.0
+
+      card.style.transform = `translateX(${tx}px) translateY(${ty}px) scale(${sc})`;
+      card.style.opacity   = String(op);
+
+      // Top accent line fills as card settles
+      sfills[i].style.width = (eased * 100) + '%';
+    });
+
+    // Active dot: whichever card is most recently fully visible
+    const active = Math.min(N - 1, Math.floor(progress * N * 1.1));
+    sdots.forEach((d, i) => d.classList.toggle('active', i === active));
+  }
+
+  // ═══════════════════════════════════════════════════════
+  // EFFECT 2 — 2.5D PARALLAX on Sim Portfolio
+  // ═══════════════════════════════════════════════════════
+  const simWrap      = document.getElementById('simParallaxWrap');
+  const pBadgeProfit = document.getElementById('pBadgeProfit');
+  const pBadgeXP     = document.getElementById('pBadgeXP');
+
+  function updateParallax() {
+    if (!simWrap || !pBadgeProfit || !pBadgeXP) return;
+    const rect  = simWrap.getBoundingClientRect();
+    const viewH = window.innerHeight;
+
+    // Skip if fully out of view
+    if (rect.bottom < -100 || rect.top > viewH + 100) return;
+
+    // normalised position of section centre relative to screen centre: -1 (below) → 0 (mid) → +1 (above)
+    const centre   = rect.top + rect.height / 2;
+    const norm     = (viewH / 2 - centre) / (viewH * 0.6); // ±1 range
+    const clamped  = Math.max(-1, Math.min(1, norm));
+
+    // Profit badge drifts up faster (layer feels closer to camera)
+    const profitY = clamped * -32;
+    // XP badge drifts up at a different rate (mid-layer)
+    const xpY     = clamped * -20;
+
+    pBadgeProfit.style.transform = `translateY(${profitY}px)`;
+    pBadgeXP.style.transform     = `translateY(${xpY}px)`;
+  }
+
+  // ═══════════════════════════════════════════════════════
+  // UNIFIED SCROLL HANDLER (rAF-throttled)
+  // ═══════════════════════════════════════════════════════
+  let ticking = false;
+
+  function onScroll() {
+    if (!ticking) {
+      requestAnimationFrame(() => {
+        runScrollEffects();
+        ticking = false;
+      });
+      ticking = true;
+    }
+  }
+
+  function runScrollEffects() {
+    // — Card spread —
+    if (stackOuter) {
+      const rect       = stackOuter.getBoundingClientRect();
+      const outerH     = stackOuter.offsetHeight;
+      const viewH      = window.innerHeight;
+      const scrolled   = viewH - rect.top;
+      const scrollable = outerH - viewH;
+      const progress   = Math.max(0, Math.min(1, scrolled / (scrollable + viewH)));
+      updateSpread(progress);
+    }
+
+    // — Parallax badges —
+    updateParallax();
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', runScrollEffects);
+
+  // Run once on load
+  runScrollEffects();
 </script>
 </body>
 </html>
