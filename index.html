@@ -768,152 +768,82 @@
   .footer-links a { font-size: 0.72rem; color: var(--muted); text-decoration: none; transition: color 0.2s; }
   .footer-links a:hover { color: var(--white); }
 
-  /* ═══════════════════════════════════════════════════
-     CINEMATIC SCROLL SYSTEM
-     ═══════════════════════════════════════════════════ */
+  /* ─── SCROLL REVEAL SYSTEM ─── */
 
-  /* Base hidden state — everything starts invisible */
-  .reveal, .reveal-left, .reveal-right, .reveal-scale,
-  .reveal-eyebrow, .reveal-line, .count-up {
-    opacity: 0;
-  }
-
-  /* --- FADE + RISE (default) --- */
+  /* Base — fade + rise */
   .reveal {
-    transform: translateY(48px);
-    transition:
-      opacity  0.9s cubic-bezier(0.16, 1, 0.3, 1),
-      transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+    opacity: 0;
+    transform: translateY(36px);
+    transition: opacity 0.75s cubic-bezier(0.22,1,0.36,1),
+                transform 0.75s cubic-bezier(0.22,1,0.36,1);
   }
   .reveal.visible { opacity: 1; transform: translateY(0); }
 
-  /* --- SLIDE FROM LEFT --- */
+  /* Variant: slide in from left */
   .reveal-left {
-    transform: translateX(-60px);
-    transition:
-      opacity  1s cubic-bezier(0.16, 1, 0.3, 1),
-      transform 1s cubic-bezier(0.16, 1, 0.3, 1);
+    opacity: 0;
+    transform: translateX(-40px);
+    transition: opacity 0.75s cubic-bezier(0.22,1,0.36,1),
+                transform 0.75s cubic-bezier(0.22,1,0.36,1);
   }
   .reveal-left.visible { opacity: 1; transform: translateX(0); }
 
-  /* --- SLIDE FROM RIGHT --- */
+  /* Variant: slide in from right */
   .reveal-right {
-    transform: translateX(60px);
-    transition:
-      opacity  1s cubic-bezier(0.16, 1, 0.3, 1),
-      transform 1s cubic-bezier(0.16, 1, 0.3, 1);
+    opacity: 0;
+    transform: translateX(40px);
+    transition: opacity 0.75s cubic-bezier(0.22,1,0.36,1),
+                transform 0.75s cubic-bezier(0.22,1,0.36,1);
   }
   .reveal-right.visible { opacity: 1; transform: translateX(0); }
 
-  /* --- SCALE UP --- */
+  /* Variant: scale up */
   .reveal-scale {
-    transform: scale(0.88) translateY(20px);
-    filter: blur(2px);
-    transition:
-      opacity  0.8s cubic-bezier(0.16, 1, 0.3, 1),
-      transform 0.8s cubic-bezier(0.16, 1, 0.3, 1),
-      filter   0.6s ease;
+    opacity: 0;
+    transform: scale(0.92);
+    transition: opacity 0.7s cubic-bezier(0.22,1,0.36,1),
+                transform 0.7s cubic-bezier(0.22,1,0.36,1);
   }
-  .reveal-scale.visible { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); }
+  .reveal-scale.visible { opacity: 1; transform: scale(1); }
 
-  /* --- STAGGER DELAYS (feature cards cascade) --- */
+  /* Stagger delays for children — applied via JS adding .stagger-N class */
   .stagger-0 { transition-delay: 0ms !important; }
-  .stagger-1 { transition-delay: 90ms !important; }
-  .stagger-2 { transition-delay: 180ms !important; }
-  .stagger-3 { transition-delay: 270ms !important; }
-  .stagger-4 { transition-delay: 360ms !important; }
-  .stagger-5 { transition-delay: 450ms !important; }
+  .stagger-1 { transition-delay: 80ms !important; }
+  .stagger-2 { transition-delay: 160ms !important; }
+  .stagger-3 { transition-delay: 240ms !important; }
+  .stagger-4 { transition-delay: 320ms !important; }
+  .stagger-5 { transition-delay: 400ms !important; }
 
-  /* --- EYEBROW CLIP --- */
+  /* Number countup — the element itself fades + rises */
+  .count-up {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.6s cubic-bezier(0.22,1,0.36,1),
+                transform 0.6s cubic-bezier(0.22,1,0.36,1);
+  }
+  .count-up.visible { opacity: 1; transform: translateY(0); }
+
+  /* Eyebrow text clips in from left */
   .reveal-eyebrow {
-    transform: translateY(10px);
-    transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.16,1,0.3,1);
+    opacity: 0;
+    transform: translateX(-14px);
+    transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.22,1,0.36,1);
   }
-  .reveal-eyebrow.visible { opacity: 1; transform: translateY(0); }
+  .reveal-eyebrow.visible { opacity: 1; transform: translateX(0); }
 
-  /* --- GREEN LINE EXPAND --- */
+  /* Section line underline expands */
   .reveal-line {
-    display: block; width: 0; height: 1px;
-    background: var(--green); opacity: 0.3; margin: 14px 0 0;
-    transition: width 1.1s cubic-bezier(0.16, 1, 0.3, 1) 0.2s, opacity 0.4s ease 0.2s;
-  }
-  .reveal-line.visible { width: 48px; opacity: 0.3; }
-
-  /* --- SECTION TITLE WORD-BY-WORD REVEAL --- */
-  .word-reveal-wrap {
-    overflow: hidden;
-    display: inline;
-  }
-  .word-reveal {
-    display: inline-block;
-    opacity: 0;
-    transform: translateY(100%) rotate(3deg);
-    transition:
-      opacity  0.7s cubic-bezier(0.16, 1, 0.3, 1),
-      transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
-  }
-  .word-reveal.visible { opacity: 1; transform: translateY(0) rotate(0deg); }
-
-  /* --- CINEMATIC SECTION TRANSITION GLOW --- */
-  @keyframes sectionGlow {
-    from { opacity: 0; transform: scaleX(0); }
-    to   { opacity: 1; transform: scaleX(1); }
-  }
-  .section-divider {
+    display: block;
+    width: 0;
     height: 1px;
-    background: linear-gradient(90deg, transparent, var(--green), transparent);
-    opacity: 0;
-    transform: scaleX(0);
-    transform-origin: left;
+    background: var(--green);
+    opacity: 0.3;
+    margin: 14px 0 0;
+    transition: width 0.9s cubic-bezier(0.22,1,0.36,1);
+    transition-delay: 0.2s;
   }
-  .section-divider.visible {
-    animation: sectionGlow 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  }
-
-  /* --- HERO WORD SPLIT ANIMATION --- */
-  .hero-word {
-    display: inline-block;
-    opacity: 0;
-    transform: translateY(60px) skewY(4deg);
-    transition:
-      opacity  0.8s cubic-bezier(0.16, 1, 0.3, 1),
-      transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-  }
-  .hero-word.in { opacity: 1; transform: translateY(0) skewY(0deg); }
-
-  /* --- STAT COUNTER WRAPPER --- */
-  .stat-wrap {
-    opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.16,1,0.3,1);
-  }
-  .stat-wrap.visible { opacity: 1; transform: translateY(0); }
-
-  /* --- CHECK LIST ITEMS hidden by default for JS stagger --- */
-  .check-list li {
-    opacity: 0;
-    transform: translateX(-16px);
-    transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.16,1,0.3,1);
-  }
-  .check-list li.visible { opacity: 1; transform: translateX(0); }
-
-  /* --- FLOATING XP BADGE PULSE --- */
-  @keyframes badgePop {
-    0%   { transform: scale(0.6) translateY(8px); opacity: 0; }
-    60%  { transform: scale(1.08) translateY(-2px); opacity: 1; }
-    100% { transform: scale(1) translateY(0); opacity: 1; }
-  }
-  .parallax-badge {
-    opacity: 0;
-  }
-  .parallax-badge.badge-popped {
-    animation: badgePop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-  }
-
-  /* --- SMOOTH SECTION BACKGROUND CROSSFADE --- */
-  section {
-    will-change: opacity;
-  }
+  .reveal-line.visible { width: 48px; }
 
   /* ─── RESPONSIVE ─── */
   @media (max-width: 920px) {
@@ -994,15 +924,15 @@
     </div>
 
     <div class="hero-stats">
-      <div class="stat-wrap" style="transition-delay:0ms">
+      <div>
         <span class="stat-num" data-count="2400" data-suffix="+" data-prefix="">2,400+</span>
         <span class="stat-label">on waitlist</span>
       </div>
-      <div class="stat-wrap" style="transition-delay:100ms">
+      <div>
         <span class="stat-num">Free</span>
         <span class="stat-label">to start</span>
       </div>
-      <div class="stat-wrap" style="transition-delay:200ms">
+      <div>
         <span class="stat-num">BSE/NSE</span>
         <span class="stat-label">live market data</span>
       </div>
@@ -1255,7 +1185,6 @@
 <section id="lessons" style="background:var(--bg2)">
   <div class="lessons-section">
     <div class="reveal-left" style="transition-delay:0.1s">
-      <div class="section-eyebrow">Duolingo-style lessons</div>
       <h2 class="section-title"><em>Questions first.</em><br>Theory never.</h2>
       <p class="section-sub" style="margin-bottom:26px">
         Minty doesn't explain and test. Minty asks, you think, you get it. Socratic learning means concepts stick because you figured them out — not because someone told you.
