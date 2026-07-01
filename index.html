@@ -1701,16 +1701,7 @@
       if (error) throw error;
 
       // 4. Success state (Resets inputs and shows confirmation without breaking layout)
-     if (btn) {
-  btn.textContent = "You're on the list!";
-  btn.style.background = 'var(--mint)';
-  btn.style.pointerEvents = 'none';
-}
-
-if (nameInput) nameInput.value = '';
-if (emailInput) emailInput.value = '';
-
-showToast('+1 on the list');
+      submitBtn.innerText = 'Added! 🎉';
       nameInput.value = '';
       emailInput.value = '';
       
@@ -1812,49 +1803,27 @@ showToast('+1 on the list');
       }
     }
 
-    } else {
-    const btn = document.querySelector('.cta-btn');
-    if (btn) {
-      btn.disabled = true;
-      btn.textContent = 'Joining...';
+    if (!email || !email.includes('@')) {
+      const inp = document.getElementById(emailId);
+      inp.style.borderColor = 'var(--red)';
+      inp.style.boxShadow = '0 0 0 3px rgba(255,84,84,0.12)';
+      setTimeout(() => { inp.style.borderColor = ''; inp.style.boxShadow = ''; }, 1800);
+      return;
     }
-
-    // 1. Insert rows into your Supabase table
-    supabase.from('waitlist')
-      .insert([{ name: name, email: email }])
-      .then(({ error }) => {
-        if (error) throw error;
-
-        // 2. YOUR EXACT ORIGINAL ANIMATION & STYLE LOGIC
-        if (btn) {
-          btn.textContent = "You're on the list!";
-          btn.style.background = 'var(--mint)';
-          btn.style.pointerEvents = 'none';
-        }
-
-        // 3. Clear your layout input fields
-        const nameInput = document.getElementById('cta-name');
-        const emailInput = document.getElementById('cta-email');
-        if (nameInput) nameInput.value = '';
-        if (emailInput) emailInput.value = '';
-
-        // 4. Trigger your right-side sliding popup box animation
-        showToast('+1 on the list');
-      })
-      .catch((err) => {
-        console.error('Supabase Error:', err.message);
-        alert('Something went wrong. Please try again!');
-        
-        // Reset the layout if it fails so they can retry
-        if (btn) {
-          btn.disabled = false;
-          btn.textContent = 'Join waitlist →';
-          btn.style.background = '';
-          btn.style.pointerEvents = '';
-        }
-      });
+    if (source === 'hero') {
+      const btn = document.getElementById('hero-btn');
+      btn.textContent = 'You\'re on the list!';
+      btn.classList.add('success');
+    } else {
+      const btn = document.querySelector('.cta-btn');
+      btn.textContent = 'You\'re on the list!';
+      btn.style.background = 'var(--mint)';
+      btn.style.pointerEvents = 'none';
+      document.getElementById('cta-name').value = '';
+    }
+    document.getElementById(emailId).value = '';
+    showToast('+1 on the list');
   }
-}
 
   // ── Socratic lesson interaction
   let answered = false;
