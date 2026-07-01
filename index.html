@@ -1645,53 +1645,65 @@
   requestAnimationFrame(() => requestAnimationFrame(measureOffsets));
   window.addEventListener('resize', measureOffsets);
 
-  function updateSpread(progress) {
-    // progress 0→1 across the full stackOuter scroll range
-    // Phase A (0→0.15): first card fades in from centre, no spread yet
-    // Phase B (0.15→0.55): cards 1 and 2 reveal and spread begins
-    // Phase C (0.55→1.0): all three fully spread, accent lines fill
+function updateSpread(progress) {
+    const isMobile = window.innerWidth <= 768;
 
-    const N = scards.length;
-    scards.forEach((card, i) => {
-        // Each card reveals at a staggered threshold
-        const revealAt = i * 0.2;      // 0, 0.2, 0.4
-        const fullAt   = revealAt + 0.35; // 0.35, 0.55, 0.75
+    if (isMobile) {
+        // MOBILE LOGIC: Uses your exact variables cleanly
+        if (stackFrame) {
+            // Calculates exactly how much card content overflows the phone viewport width
+            const maxMove = stackFrame.scrollWidth - window.innerWidth + 40; 
+            const moveX = progress * maxMove;
+            stackFrame.style.transform = `translateX(${-Math.max(0, moveX)}px) translateY(0px) scale(1)`;
+        }
+        
+        // Reset individual card positions so they sit in a flat horizontal line
+        scards.forEach((card) => {
+            card.style.transform = 'none';
+            card.style.opacity = '1';
+        });
 
-        // local: 0 (not yet revealed) → 1 (fully in position)
-        const local = Math.max(0, Math.min(1, (progress - revealAt) / (fullAt - revealAt)));
+        // Fill lines progressively as you swipe by them
+        sfills.forEach((fill, i) => {
+            const cardProgress = progress * scards.length;
+            const width = Math.min(Math.max((cardProgress - i) * 100, 0), 100);
+            fill.style.width = `${width}%`;
+        });
+    } else {
+        // DESKTOP LOGIC: 100% exact copy of your original code layout
+        const N = scards.length;
+        scards.forEach((card, i) => {
+            const revealAt = i * 0.2;      // 0, 0.2, 0.4
+            const fullAt   = revealAt + 0.35; // 0.35, 0.55, 0.75
 
-        // easeOutCubic for snappy feel
-        const eased = 1 - Math.pow(1 - local, 3);
+            const local = Math.max(0, Math.min(1, (progress - revealAt) / (fullAt - revealAt)));
+            const eased = 1 - Math.pow(1 - local, 3);
 
-        // Translate from centre → final position
-        const offset = cardOffsets[i] || 0;
-        const tx = offset * (eased - 1); // starts at -offset (at centre), ends at 0 (natural pos)
-        const ty = (1 - eased) * 40;     // subtle rise from below
-        const op = eased;
-        const sc = 0.88 + eased * 0.12;  // scale from 0.88 → 1.0
+            const offset = cardOffsets[i] || 0;
+            const tx = offset * (eased - 1); 
+            const ty = (1 - eased) * 40;     
+            const op = eased;
+            const sc = 0.88 + eased * 0.12;  
 
-        card.style.transform = `translateX(${tx}px) translateY(${ty}px) scale(${sc})`;
-        card.style.opacity = op;
-    });
+            card.style.transform = `translateX(${tx}px) translateY(${ty}px) scale(${sc})`;
+            card.style.opacity = op;
+        });
 
-    // Accent progress lines filling up sequentially
-    sfills.forEach((fill, i) => {
-        // Line i fills up while progress goes from (0.1 + i*0.25) to (0.35 + i*0.25)
-        const start = 0.1 + i * 0.25;
-        const end   = 0.35 + i * 0.25;
-        const p = Math.max(0, Math.min(1, (progress - start) / (end - start)));
-        fill.style.width = `${p * 100}%`;
-    });
+        sfills.forEach((fill, i) => {
+            const start = 0.1 + i * 0.25;
+            const end   = 0.35 + i * 0.25;
+            const p = Math.max(0, Math.min(1, (progress - start) / (end - start)));
+            fill.style.width = `${p * 100}%`;
+        });
+    }
 
-    // Update progress indicator dots
-    // Highlight whichever card zone we are currently "in"
-    const activeIdx = Math.min(Math.floor(progress * N), N - 1);
+    // Active dots logic works globally for both screens
+    const activeIdx = Math.min(Math.floor(progress * scards.length), scards.length - 1);
     sdots.forEach((dot, i) => {
         if (i === activeIdx) dot.classList.add('active');
         else dot.classList.remove('active');
     });
 }
-
     // Skip if fully out of view
     if (rect.bottom < -100 || rect.top > viewH + 100) return;
 
