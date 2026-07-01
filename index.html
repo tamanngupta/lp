@@ -476,21 +476,111 @@
   .stack-end-pad { height: 80px; background: var(--bg2); }
 
   /* ─── SIM TRADING — 2.5D PARALLAX ─── */
-  .sim-section {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 72px;
-    align-items: center;
-    position: relative;
-  }
-  /* Wrap holds frame + floating badges, enabling relative stacking */
-  .sim-parallax-wrap {
-    position: relative;
-  }
-  .sim-ui {
-    background: var(--card); border: 1px solid var(--border);
-    border-radius: 18px; overflow: hidden;
-    position: relative; z-index: 1;
-    will-change: transform;
-  }
+/* ═══════════════════════════════════════════════════════
+   SCROLLYTELLING — pinned sticky visual, scrubbed by scroll.
+   Replaces the old two independent "reveal on enter" sections
+   (Sim Trading + Lessons) with one continuous scroll-driven story.
+   ═══════════════════════════════════════════════════════ */
+.story-section {
+  position: relative;
+  background: var(--bg);
+  padding: 60px 56px 40px;
+}
+.story-grid {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1.15fr;
+  gap: 80px;
+  align-items: start;
+}
+.story-track {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+.story-progress-rail {
+  position: absolute;
+  left: -30px; top: 6px; bottom: 6px;
+  width: 2px;
+  background: var(--border);
+  border-radius: 2px;
+}
+.story-progress-fill {
+  position: absolute;
+  left: 0; top: 0; width: 100%; height: 0%;
+  background: linear-gradient(var(--green), var(--mint));
+  border-radius: 2px;
+}
+.story-step {
+  min-height: 82vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  opacity: 0.22;
+  filter: blur(2px);
+  transform: translateY(18px) scale(0.98);
+  transition: opacity 0.15s linear, transform 0.15s linear, filter 0.15s linear;
+  will-change: opacity, transform, filter;
+}
+.story-step:last-child { min-height: 60vh; }
+.story-step-tag {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: 'DM Mono', monospace; font-size: 0.68rem;
+  color: var(--green); letter-spacing: 0.1em;
+  margin-bottom: 14px;
+}
+.story-step-tag::before {
+  content: ''; width: 14px; height: 1px; background: var(--green);
+}
+.story-sticky-col { position: relative; height: 100%; }
+.story-sticky {
+  position: sticky;
+  top: 110px;
+  height: 540px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.story-stage-label {
+  position: absolute;
+  top: -38px; left: 0;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.66rem; letter-spacing: 0.1em;
+  color: var(--muted);
+}
+.story-stage-label span { color: var(--green); }
+/* Cross-fading stages — pinned, driven purely by scroll progress in JS */
+.story-stage {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  will-change: opacity, transform;
+}
+.sim-ui {
+  width: 100%; max-width: 380px;
+  background: var(--card2);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 30px 90px rgba(0,0,0,0.5), 0 0 0 1px rgba(0,255,135,0.04);
+}
+/* Left side text column container (legacy, still referenced by JS ids) */
+.sim-content {
+  position: relative;
+  z-index: 5;
+}
+.sim-parallax-wrap {
+  position: relative;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2;
+}
+
   /* Floating parallax badges — sit above the card, move faster on scroll */
   .parallax-badge {
     position: absolute;
@@ -593,11 +683,7 @@
   .check-list li svg { flex-shrink: 0; }
 
   /* ─── LESSONS ─── */
-  .lessons-section {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 72px;
-    align-items: center;
-  }
-  .lesson-cards-stack { position: relative; height: 380px; }
+  .lesson-cards-stack { position: relative; height: 380px; width: 100%; max-width: 380px; }
   .lesson-card-demo {
     position: absolute; left: 0; right: 0;
     background: var(--card); border: 1px solid var(--border);
@@ -646,8 +732,25 @@
   }
   .xp-label { font-family: 'DM Mono', monospace; font-size: 0.68rem; color: var(--green); }
 
-  /* ─── FEATURES ─── */
-  .features-section { background: var(--bg2); }
+  /* ─── FEATURES — scroll-scrubbed sequential unlock ─── */
+  .features-section { background: var(--bg2); position: relative; }
+  .features-head-row {
+    display: flex; align-items: flex-end; justify-content: space-between;
+    flex-wrap: wrap; gap: 16px;
+  }
+  .features-counter {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: 'DM Mono', monospace; font-size: 0.72rem;
+    color: var(--muted); letter-spacing: 0.04em;
+    padding-bottom: 6px;
+  }
+  .features-counter b { color: var(--green); font-weight: 600; }
+  .features-counter-rail {
+    width: 64px; height: 3px; background: var(--border); border-radius: 3px; overflow: hidden;
+  }
+  .features-counter-fill {
+    height: 100%; width: 0%; background: var(--green); border-radius: 3px;
+  }
   .features-grid {
     display: grid; grid-template-columns: repeat(3, 1fr);
     gap: 14px; margin-top: 56px;
@@ -655,8 +758,10 @@
   .feature-card {
     background: var(--card); border: 1px solid var(--border);
     border-radius: 14px; padding: 30px;
+    opacity: 0; transform: translateY(30px) scale(0.96);
     transition: transform 0.2s, border-color 0.25s, box-shadow 0.25s;
     cursor: default;
+    will-change: opacity, transform;
   }
   .feature-card:hover {
     transform: translateY(-4px);
@@ -677,10 +782,11 @@
   }
   .feature-desc { font-size: 0.83rem; color: var(--muted); line-height: 1.65; font-weight: 400; }
 
-  /* ─── PROOF ─── */
+  /* ─── PROOF — scroll-scrubbed ─── */
   .proof-section {
     display: flex; flex-direction: column; align-items: center; text-align: center;
   }
+  .proof-scrub { opacity: 0; transform: translateY(24px); will-change: opacity, transform; }
   .proof-avatars { display: flex; margin-bottom: 14px; }
   .proof-avatar {
     width: 36px; height: 36px; border-radius: 50%;
@@ -710,11 +816,14 @@
   }
   .cta-glow {
     position: absolute; top: 50%; left: 50%;
-    transform: translate(-50%,-50%);
+    transform: translate(-50%,-50%) scale(0.6);
     width: 560px; height: 280px;
     background: radial-gradient(ellipse, rgba(0,255,135,0.09) 0%, transparent 70%);
     pointer-events: none;
+    opacity: 0.3;
+    will-change: opacity, transform;
   }
+  .cta-scrub { opacity: 0; transform: translateY(26px); will-change: opacity, transform; }
   .cta-headline {
     font-family: 'Fraunces', serif;
     font-size: clamp(2.4rem, 4.5vw, 4rem);
@@ -853,7 +962,6 @@
     .hero { flex-direction: column; padding: 100px 24px 80px; }
     section { padding: 80px 24px; }
     .features-grid { grid-template-columns: 1fr; }
-    .sim-section, .lessons-section { grid-template-columns: 1fr; gap: 48px; }
     footer { flex-direction: column; gap: 16px; text-align: center; padding: 28px 24px 72px; }
     .float-card { display: none; }
     /* Card spread mobile — stack vertically, no scroll animation */
@@ -865,6 +973,15 @@
     .scard-line-fill { width: 100% !important; }
     /* Parallax badges mobile — simpler, no float offset */
     .parallax-badge { display: none; }
+    /* Scrollytelling mobile — unpin, stack normally, no scrub */
+    .story-grid { grid-template-columns: 1fr; gap: 40px; }
+    .story-progress-rail { display: none; }
+    .story-step { min-height: auto !important; opacity: 1 !important; filter: none !important; transform: none !important; padding: 0 0 8px; }
+    .story-sticky-col { order: -1; }
+    .story-sticky { position: relative; top: 0; height: 400px; }
+    .story-stage { position: relative; inset: auto; opacity: 1 !important; transform: none !important; }
+    #stageLesson { display: none; }
+    .story-stage-label { display: none; }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -872,113 +989,12 @@
   }
 
  @media (max-width: 768px) {
-    /* 1. Prevent global horizontal overflow */
-    body, html {
-        overflow-x: hidden;
-        width: 100%;
-    }
-
-    /* 2. Fix the Navigation layout stretching */
     nav {
-        padding: 14px 20px !important;
-        width: 100%;
-        box-sizing: border-box;
+        padding: 14px 20px;
     }
-    .nav-links {
-        display: none; /* Keeps layout clean on mobile */
+    nav.scrolled {
+        padding: 10px 20px;
     }
-
-    /* 3. Hero layout & form input optimization */
-    .hero {
-        flex-direction: column;
-        padding: 110px 20px 60px;
-        text-align: center;
-        gap: 30px;
-        min-height: auto;
-        width: 100%;
-    }
-    .waitlist-form, .cta-form {
-        flex-direction: column;
-        width: 100%;
-        max-width: 100%;
-        gap: 12px;
-    }
-    .waitlist-input, .waitlist-btn, .cta-input, .cta-btn {
-        width: 100% !important;
-    }
-
-    /* Prevent floating cards in hero visual from clipping screen edges */
-    .hero-visual {
-        width: 100%;
-        min-height: 400px;
-        overflow: hidden;
-    }
-    .float-card.card-portfolio {
-        right: 10px !important;
-        top: 20px;
-    }
-    .float-card.card-lesson {
-        left: 10px !important;
-        bottom: 20px;
-    }
-
-    /* 4. Split Grids & Features to Single Columns */
-    section {
-        padding: 60px 20px !important;
-        width: 100%;
-        box-sizing: border-box;
-    }
-    .sim-section, .lessons-section, .features-grid {
-        grid-template-columns: 1fr !important;
-        gap: 32px;
-        width: 100%;
-    }
-    .sim-section {
-        display: flex;
-        flex-direction: column-reverse;
-    }
-
-    /* 5. PRESTIGE MOBILE SCROLL STACK ANIMATION */
-    .stack-scroll-outer {
-        height: 300vh; /* Keeps the sticky scroll track length active */
-        width: 100%;
-    }
-    .stack-sticky {
-        position: sticky;
-        top: 0;
-        height: 100vh;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        padding: 0 20px;
-        width: 100%;
-        box-sizing: border-box;
-    }
-    .stack-frame {
-        position: relative;
-        width: 100%;
-        height: 70vh; /* Constrain height so everything stays visible */
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        padding: 0;
-        gap: 0; /* Remove horizontal gaps */
-    }
-    .scard {
-        position: absolute; /* Layer cards on top of each other */
-        width: 100% !important;
-        max-width: 100%;
-        height: 320px; /* Fixed height for consistency */
-        top: calc(50% - 160px); /* Perfectly center visually */
-        left: 0;
-        right: 0;
-        margin: 0 auto;
-        box-sizing: border-box;
-        transform-origin: center bottom;
-    }
-}
     /* Hide desktop nav links on mobile to save space */
     .nav-links {
         display: none; 
@@ -1036,17 +1052,8 @@
     section {
         padding: 60px 20px;
     }
-    
-    .sim-section, .lessons-section {
-        grid-template-columns: 1fr;
-        gap: 40px;
-    }
-    
-    /* Flip order if you want text to stay on top of the UI element on mobile */
-    .sim-section {
-        display: flex;
-        flex-direction: column-reverse;
-    }
+    .story-section { padding: 40px 20px 20px; }
+    .story-sticky { height: 340px; }
 }
 @media (max-width: 768px) {
     /* Collapse feature list cards to single rows */
@@ -1085,11 +1092,25 @@
         width: 100%;
     }
 }
+
+ .sim-glow-radial {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 120%; /* Bigger than the mockup itself */
+  height: 120%;
+  background: radial-gradient(circle, rgba(46, 213, 115, 0.15) 0%, rgba(0, 0, 0, 0) 70%);
+  z-index: -1; /* Sits perfectly behind the mockup */
+  pointer-events: none;
+  filter: blur(40px);
+}
  
 </style>
 </head>
 <body>
 
+</div>
 <!-- NAV -->
 <nav id="nav">
   
@@ -1252,207 +1273,228 @@
   <div class="stack-end-pad"></div>
 </section>
 
-<!-- SIM TRADING -->
-<section id="features" style="background:var(--bg)">
-  <div class="sim-section">
-    <div class="sim-parallax-wrap reveal-left" id="simParallaxWrap">
+<!-- SCROLLYTELLING: SIM TRADING → LESSONS -->
+<!-- Sticky-pinned visual on the right, scrubbed by scroll position.
+     No IntersectionObserver here — everything is driven every rAF
+     tick off getBoundingClientRect() in the JS below (see EFFECT 2). -->
+<section class="story-section" id="storySection">
+  <div class="story-grid">
 
-      <!-- Floating parallax badge: profit -->
-      <div class="parallax-badge badge-profit" id="pBadgeProfit">
-        <div class="badge-profit-value">+₹12,050</div>
-        <div class="badge-profit-label">THIS MONTH · +12.5%</div>
+    <div class="story-track" id="storyTrack">
+      <div class="story-progress-rail">
+        <div class="story-progress-fill" id="storyProgressFill"></div>
       </div>
 
-      <div class="sim-ui">
-        <div class="sim-header">
-          <div class="sim-title-bar">
-            <div class="dot dot-r"></div>
-            <div class="dot dot-y"></div>
-            <div class="dot dot-g"></div>
-          </div>
-          <div class="sim-tab-label">PORTFOLIO · LIVE</div>
-        </div>
-        <div class="portfolio-summary">
-          <div>
-            <div class="port-value-label">SIM PORTFOLIO VALUE</div>
-            <div class="port-value">₹1,08,420</div>
-            <div class="port-change">↑ ₹12,050 this month · +12.5%</div>
-          </div>
-          <div class="mini-chart">
-            <div class="bar" style="height:42%"></div>
-            <div class="bar" style="height:52%"></div>
-            <div class="bar" style="height:48%"></div>
-            <div class="bar" style="height:63%"></div>
-            <div class="bar" style="height:58%"></div>
-            <div class="bar" style="height:70%"></div>
-            <div class="bar" style="height:66%"></div>
-            <div class="bar" style="height:78%"></div>
-            <div class="bar" style="height:74%"></div>
-            <div class="bar" style="height:88%"></div>
-            <div class="bar" style="height:100%"></div>
-          </div>
-        </div>
-        <div class="stock-list">
-          <div class="stock-item">
-            <div class="stock-left">
-              <div class="stock-logo" style="background:rgba(0,112,209,0.13);color:#5AA8E8">RELI</div>
-              <div>
-                <div class="stock-name">Reliance Industries</div>
-                <div class="stock-shares">14 shares</div>
-              </div>
-            </div>
-            <div class="stock-right">
-              <div class="stock-price">₹2,847</div>
-              <div class="stock-pct up">+3.2%</div>
-            </div>
-          </div>
-          <div class="stock-item">
-            <div class="stock-left">
-              <div class="stock-logo" style="background:rgba(0,150,100,0.13);color:#4DC99A">INFY</div>
-              <div>
-                <div class="stock-name">Infosys</div>
-                <div class="stock-shares">22 shares</div>
-              </div>
-            </div>
-            <div class="stock-right">
-              <div class="stock-price">₹1,543</div>
-              <div class="stock-pct up">+1.8%</div>
-            </div>
-          </div>
-          <div class="stock-item">
-            <div class="stock-left">
-              <div class="stock-logo" style="background:rgba(200,50,50,0.13);color:#E06060">TATA</div>
-              <div>
-                <div class="stock-name">Tata Motors</div>
-                <div class="stock-shares">35 shares</div>
-              </div>
-            </div>
-            <div class="stock-right">
-              <div class="stock-price">₹938</div>
-              <div class="stock-pct down">−0.9%</div>
-            </div>
-          </div>
-          <div class="stock-item">
-            <div class="stock-left">
-              <div class="stock-logo" style="background:rgba(200,120,0,0.13);color:#D4A030">HDFC</div>
-              <div>
-                <div class="stock-name">HDFC Bank</div>
-                <div class="stock-shares">8 shares</div>
-              </div>
-            </div>
-            <div class="stock-right">
-              <div class="stock-price">₹1,691</div>
-              <div class="stock-pct up">+0.5%</div>
-            </div>
-          </div>
-        </div>
-      </div><!-- /sim-ui -->
-
-      <!-- Floating parallax badge: XP -->
-      <div class="parallax-badge badge-xp" id="pBadgeXP">
-        <div class="badge-xp-row">
-          <span class="badge-xp-pill">+40 XP</span>
-          <span class="badge-xp-label">Lesson completed</span>
-        </div>
+      <div class="story-step" id="story-step-0" data-step="0">
+        <div class="story-step-tag">01 — Sim Trading</div>
+        <h2 class="section-title">Real stocks.<br><em>Zero risk.</em></h2>
+        <p class="section-sub" style="margin-bottom:26px">
+          Trade Reliance, Infosys, and Tata with ₹1,00,000 in virtual money pulled from live BSE and NSE feeds. Build a real portfolio mindset without the real consequences.
+        </p>
+        <ul class="check-list">
+          <li>
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="var(--green)" stroke-width="1.8" stroke-linecap="round"><path d="M3 8L6.5 11.5L13 5"/></svg>
+            Live BSE/NSE price feeds — no 15-min delay
+          </li>
+          <li>
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="var(--green)" stroke-width="1.8" stroke-linecap="round"><path d="M3 8L6.5 11.5L13 5"/></svg>
+            Track your P&amp;L just like a real demat account
+          </li>
+          <li>
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="var(--green)" stroke-width="1.8" stroke-linecap="round"><path d="M3 8L6.5 11.5L13 5"/></svg>
+            Weekly leaderboards vs other teen traders
+          </li>
+          <li>
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="var(--green)" stroke-width="1.8" stroke-linecap="round"><path d="M3 8L6.5 11.5L13 5"/></svg>
+            In-app news feed with context for beginners
+          </li>
+        </ul>
       </div>
 
-    </div><!-- /sim-parallax-wrap -->
+      <div class="story-step" id="story-step-1" data-step="1">
+        <div class="story-step-tag" style="color:var(--mint)">02 — Lessons</div>
+        <h2 class="section-title"><em>Questions first.</em><br>Theory never.</h2>
+        <p class="section-sub" style="margin-bottom:26px">
+          Minty doesn't explain and test. Minty asks, you think, you get it. Socratic learning means concepts stick because you figured them out — not because someone told you.
+        </p>
+        <ul class="check-list">
+          <li>
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="var(--mint)" stroke-width="1.8" stroke-linecap="round"><path d="M3 8L6.5 11.5L13 5"/></svg>
+            50+ bite-size lessons on stocks, SIPs, mutual funds
+          </li>
+          <li>
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="var(--mint)" stroke-width="1.8" stroke-linecap="round"><path d="M3 8L6.5 11.5L13 5"/></svg>
+            Daily streaks and XP to keep the habit alive
+          </li>
+          <li>
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="var(--mint)" stroke-width="1.8" stroke-linecap="round"><path d="M3 8L6.5 11.5L13 5"/></svg>
+            Tied directly to your sim portfolio decisions
+          </li>
+          <li>
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="var(--mint)" stroke-width="1.8" stroke-linecap="round"><path d="M3 8L6.5 11.5L13 5"/></svg>
+            Explained in plain language — no MBA required
+          </li>
+        </ul>
+      </div>
+    </div><!-- /story-track -->
 
-    <div class="reveal-right" style="transition-delay:0.1s">
-      <div class="section-eyebrow">Sim Trading</div>
-      <h2 class="section-title">Real stocks.<br><em>Zero risk.</em></h2>
-      <p class="section-sub" style="margin-bottom:26px">
-        Trade Reliance, Infosys, and Tata with ₹1,00,000 in virtual money pulled from live BSE and NSE feeds. Build a real portfolio mindset without the real consequences.
-      </p>
-      <ul class="check-list">
-        <li>
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="var(--green)" stroke-width="1.8" stroke-linecap="round"><path d="M3 8L6.5 11.5L13 5"/></svg>
-          Live BSE/NSE price feeds — no 15-min delay
-        </li>
-        <li>
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="var(--green)" stroke-width="1.8" stroke-linecap="round"><path d="M3 8L6.5 11.5L13 5"/></svg>
-          Track your P&amp;L just like a real demat account
-        </li>
-        <li>
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="var(--green)" stroke-width="1.8" stroke-linecap="round"><path d="M3 8L6.5 11.5L13 5"/></svg>
-          Weekly leaderboards vs other teen traders
-        </li>
-        <li>
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="var(--green)" stroke-width="1.8" stroke-linecap="round"><path d="M3 8L6.5 11.5L13 5"/></svg>
-          In-app news feed with context for beginners
-        </li>
-      </ul>
-    </div>
-  </div>
+    <div class="story-sticky-col">
+      <div class="story-sticky" id="storySticky">
+        <div class="story-stage-label">STAGE <span id="storyStageNum">01</span> / 02 · <span id="storyStageName">SIM TRADING</span></div>
+
+        <!-- STAGE A — Sim portfolio mockup -->
+        <div class="story-stage" id="stageSim">
+          <div class="parallax-badge badge-profit" id="pBadgeProfit">
+            <div class="badge-profit-value">+₹12,050</div>
+            <div class="badge-profit-label">THIS MONTH · +12.5%</div>
+          </div>
+
+          <div class="sim-ui">
+            <div class="sim-header">
+              <div class="sim-title-bar">
+                <div class="dot dot-r"></div>
+                <div class="dot dot-y"></div>
+                <div class="dot dot-g"></div>
+              </div>
+              <div class="sim-tab-label">PORTFOLIO · LIVE</div>
+            </div>
+            <div class="portfolio-summary">
+              <div>
+                <div class="port-value-label">SIM PORTFOLIO VALUE</div>
+                <div class="port-value">₹1,08,420</div>
+                <div class="port-change">↑ ₹12,050 this month · +12.5%</div>
+              </div>
+              <div class="mini-chart">
+                <div class="bar" style="height:42%"></div>
+                <div class="bar" style="height:52%"></div>
+                <div class="bar" style="height:48%"></div>
+                <div class="bar" style="height:63%"></div>
+                <div class="bar" style="height:58%"></div>
+                <div class="bar" style="height:70%"></div>
+                <div class="bar" style="height:66%"></div>
+                <div class="bar" style="height:78%"></div>
+                <div class="bar" style="height:74%"></div>
+                <div class="bar" style="height:88%"></div>
+                <div class="bar" style="height:100%"></div>
+              </div>
+            </div>
+            <div class="stock-list">
+              <div class="stock-item">
+                <div class="stock-left">
+                  <div class="stock-logo" style="background:rgba(0,112,209,0.13);color:#5AA8E8">RELI</div>
+                  <div>
+                    <div class="stock-name">Reliance Industries</div>
+                    <div class="stock-shares">14 shares</div>
+                  </div>
+                </div>
+                <div class="stock-right">
+                  <div class="stock-price">₹2,847</div>
+                  <div class="stock-pct up">+3.2%</div>
+                </div>
+              </div>
+              <div class="stock-item">
+                <div class="stock-left">
+                  <div class="stock-logo" style="background:rgba(0,150,100,0.13);color:#4DC99A">INFY</div>
+                  <div>
+                    <div class="stock-name">Infosys</div>
+                    <div class="stock-shares">22 shares</div>
+                  </div>
+                </div>
+                <div class="stock-right">
+                  <div class="stock-price">₹1,543</div>
+                  <div class="stock-pct up">+1.8%</div>
+                </div>
+              </div>
+              <div class="stock-item">
+                <div class="stock-left">
+                  <div class="stock-logo" style="background:rgba(200,50,50,0.13);color:#E06060">TATA</div>
+                  <div>
+                    <div class="stock-name">Tata Motors</div>
+                    <div class="stock-shares">35 shares</div>
+                  </div>
+                </div>
+                <div class="stock-right">
+                  <div class="stock-price">₹938</div>
+                  <div class="stock-pct down">−0.9%</div>
+                </div>
+              </div>
+              <div class="stock-item">
+                <div class="stock-left">
+                  <div class="stock-logo" style="background:rgba(200,120,0,0.13);color:#D4A030">HDFC</div>
+                  <div>
+                    <div class="stock-name">HDFC Bank</div>
+                    <div class="stock-shares">8 shares</div>
+                  </div>
+                </div>
+                <div class="stock-right">
+                  <div class="stock-price">₹1,691</div>
+                  <div class="stock-pct up">+0.5%</div>
+                </div>
+              </div>
+            </div>
+          </div><!-- /sim-ui -->
+
+          <div class="parallax-badge badge-xp" id="pBadgeXP">
+            <div class="badge-xp-row">
+              <span class="badge-xp-pill">+40 XP</span>
+              <span class="badge-xp-label">Lesson completed</span>
+            </div>
+          </div>
+        </div><!-- /stageSim -->
+
+        <!-- STAGE B — Lesson demo card -->
+        <div class="story-stage" id="stageLesson">
+          <div class="lesson-cards-stack">
+            <div class="lesson-card-demo behind2"></div>
+            <div class="lesson-card-demo behind"></div>
+            <div class="lesson-card-demo" id="lesson-card">
+              <div class="lesson-q-label">Lesson 4 · P/E Ratio</div>
+              <div class="lesson-q">A stock has a P/E ratio of 40. Another has a P/E of 12. Which is likely priced higher relative to its earnings?</div>
+              <div class="lesson-options">
+                <div class="lesson-opt correct" onclick="answerLesson(this, true)">
+                  <span class="lesson-opt-letter">A</span>
+                  The stock with P/E of 40
+                </div>
+                <div class="lesson-opt" onclick="answerLesson(this, false)">
+                  <span class="lesson-opt-letter">B</span>
+                  The stock with P/E of 12
+                </div>
+                <div class="lesson-opt" onclick="answerLesson(this, false)">
+                  <span class="lesson-opt-letter">C</span>
+                  Both are priced the same
+                </div>
+              </div>
+              <div class="lesson-xp">
+                <span style="font-size:0.68rem;color:var(--muted)">XP</span>
+                <div class="xp-bar"><div class="xp-fill"></div></div>
+                <span class="xp-label">360 / 500</span>
+              </div>
+            </div>
+          </div>
+        </div><!-- /stageLesson -->
+
+      </div><!-- /story-sticky -->
+    </div><!-- /story-sticky-col -->
+
+  </div><!-- /story-grid -->
 </section>
 
-<!-- LESSONS -->
-<section id="lessons" style="background:var(--bg2)">
-  <div class="lessons-section">
-    <div class="reveal-left" style="transition-delay:0.1s">
-      <h2 class="section-title"><em>Questions first.</em><br>Theory never.</h2>
-      <p class="section-sub" style="margin-bottom:26px">
-        Minty doesn't explain and test. Minty asks, you think, you get it. Socratic learning means concepts stick because you figured them out — not because someone told you.
-      </p>
-      <ul class="check-list">
-        <li>
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="var(--mint)" stroke-width="1.8" stroke-linecap="round"><path d="M3 8L6.5 11.5L13 5"/></svg>
-          50+ bite-size lessons on stocks, SIPs, mutual funds
-        </li>
-        <li>
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="var(--mint)" stroke-width="1.8" stroke-linecap="round"><path d="M3 8L6.5 11.5L13 5"/></svg>
-          Daily streaks and XP to keep the habit alive
-        </li>
-        <li>
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="var(--mint)" stroke-width="1.8" stroke-linecap="round"><path d="M3 8L6.5 11.5L13 5"/></svg>
-          Tied directly to your sim portfolio decisions
-        </li>
-        <li>
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="var(--mint)" stroke-width="1.8" stroke-linecap="round"><path d="M3 8L6.5 11.5L13 5"/></svg>
-          Explained in plain language — no MBA required
-        </li>
-      </ul>
-    </div>
 
-    <div class="lesson-cards-stack reveal-right" style="transition-delay:0.22s">
-      <div class="lesson-card-demo behind2"></div>
-      <div class="lesson-card-demo behind"></div>
-      <div class="lesson-card-demo" id="lesson-card">
-        <div class="lesson-q-label">Lesson 4 · P/E Ratio</div>
-        <div class="lesson-q">A stock has a P/E ratio of 40. Another has a P/E of 12. Which is likely priced higher relative to its earnings?</div>
-        <div class="lesson-options">
-          <div class="lesson-opt correct" onclick="answerLesson(this, true)">
-            <span class="lesson-opt-letter">A</span>
-            The stock with P/E of 40
-          </div>
-          <div class="lesson-opt" onclick="answerLesson(this, false)">
-            <span class="lesson-opt-letter">B</span>
-            The stock with P/E of 12
-          </div>
-          <div class="lesson-opt" onclick="answerLesson(this, false)">
-            <span class="lesson-opt-letter">C</span>
-            Both are priced the same
-          </div>
-        </div>
-        <div class="lesson-xp">
-          <span style="font-size:0.68rem;color:var(--muted)">XP</span>
-          <div class="xp-bar"><div class="xp-fill"></div></div>
-          <span class="xp-label">360 / 500</span>
-        </div>
-      </div>
+<!-- FEATURES — scroll-scrubbed sequential unlock, no observer, pure rAF -->
+<section class="features-section" id="featuresSection">
+  <div class="features-head-row">
+    <div>
+      <div class="section-eyebrow">Everything included</div>
+      <h2 class="section-title">Built for the <em>next<br>generation</em> of investors.</h2>
     </div>
-  </div>
-</section>
-
-<!-- FEATURES -->
-<section class="features-section">
-  <div class="reveal">
-    <div class="section-eyebrow">Everything included</div>
-    <h2 class="section-title">Built for the <em>next<br>generation</em> of investors.</h2>
+    <div class="features-counter">
+      <span><b id="featuresUnlockedNum">0</b>/6 unlocked</span>
+      <div class="features-counter-rail"><div class="features-counter-fill" id="featuresCounterFill"></div></div>
+    </div>
   </div>
   <div class="features-grid" id="featuresGrid">
 
-    <div class="feature-card reveal-scale stagger-0">
+    <div class="feature-card" data-fi="0">
       <div class="feature-icon">
         <!-- Indian flag / map icon -->
         <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
@@ -1464,7 +1506,7 @@
       <p class="feature-desc">Learn with Sensex, Nifty 50, and the brands you already know — Tata, Zomato, Paytm. No American stocks to confuse the picture.</p>
     </div>
 
-    <div class="feature-card reveal-scale stagger-1">
+    <div class="feature-card" data-fi="1">
       <div class="feature-icon">
         <!-- Game controller icon -->
         <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
@@ -1477,7 +1519,7 @@
       <p class="feature-desc">Streaks, XP, badges, leaderboards. Learning finance should feel like a game — because then you actually do it every day.</p>
     </div>
 
-    <div class="feature-card reveal-scale stagger-2">
+    <div class="feature-card" data-fi="2">
       <div class="feature-icon">
         <!-- Family / people icon -->
         <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
@@ -1492,7 +1534,7 @@
       <p class="feature-desc">Parents see exactly what their teen is learning. No surprises. Progress reports, lesson summaries, and weekly portfolio snapshots.</p>
     </div>
 
-    <div class="feature-card reveal-scale stagger-3">
+    <div class="feature-card" data-fi="3">
       <div class="feature-icon">
         <!-- Lock icon -->
         <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
@@ -1505,7 +1547,7 @@
       <p class="feature-desc">100% simulated. No payments, no in-app purchases, no risk. Just the mindset of an investor, built safely before the stakes are real.</p>
     </div>
 
-    <div class="feature-card reveal-scale stagger-4">
+    <div class="feature-card" data-fi="4">
       <div class="feature-icon">
         <!-- Newspaper / feed icon -->
         <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
@@ -1517,7 +1559,7 @@
       <p class="feature-desc">When RBI hikes rates or a company releases earnings, Minty explains what it means for your portfolio — in language that actually makes sense.</p>
     </div>
 
-    <div class="feature-card reveal-scale stagger-5">
+    <div class="feature-card" data-fi="5">
       <div class="feature-icon">
         <!-- AI / bot icon -->
         <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
@@ -1535,9 +1577,9 @@
   </div>
 </section>
 
-<!-- SOCIAL PROOF -->
-<section class="proof-section" style="padding:80px 56px">
-  <div class="proof-avatars reveal">
+<!-- SOCIAL PROOF — scroll-scrubbed -->
+<section class="proof-section" style="padding:80px 56px" id="proofSection">
+  <div class="proof-avatars proof-scrub" id="proofScrub1">
     <div class="proof-avatar" style="font-size:1rem;background:#2A3D2E">👦</div>
     <div class="proof-avatar" style="font-size:1rem;background:#243828">👧</div>
     <div class="proof-avatar" style="font-size:1rem;background:#2A3D2E">🧑</div>
@@ -1549,15 +1591,17 @@
     <span class="wl-dot"></span>
     2,400+ teens already on the waitlist
   </div>
-  <div class="section-eyebrow" style="text-align:center">Early testers say</div>
-  <h2 class="section-title" style="text-align:center;max-width:680px;font-weight:600">"I finally understand what <em>my dad means</em><br>when he talks about the market."</h2>
-  <p class="section-sub" style="text-align:center;margin:14px auto 0">— Riya, 15, Delhi</p>
+  <div class="proof-scrub" id="proofScrub2">
+    <div class="section-eyebrow" style="text-align:center">Early testers say</div>
+    <h2 class="section-title" style="text-align:center;max-width:680px;font-weight:600">"I finally understand what <em>my dad means</em><br>when he talks about the market."</h2>
+    <p class="section-sub" style="text-align:center;margin:14px auto 0">— Riya, 15, Delhi</p>
+  </div>
 </section>
 
-<!-- FINAL CTA -->
-<section class="cta-section">
-  <div class="cta-glow"></div>
-  <div class="reveal">
+<!-- FINAL CTA — scroll-scrubbed glow + rise -->
+<section class="cta-section" id="ctaSection">
+  <div class="cta-glow" id="ctaGlow"></div>
+  <div class="cta-scrub" id="ctaScrub">
     <h2 class="cta-headline">Your portfolio<br>starts <em>today.</em></h2>
     <p class="cta-sub">Join the waitlist. Be first when MintyBath launches. It's free forever for early signups.</p>
     <div class="cta-form">
@@ -1567,6 +1611,7 @@
     <p style="font-size:0.72rem;color:var(--muted);margin-top:14px;position:relative;z-index:1;font-weight:400">No spam ever. We'll email you when we launch — that's it.</p>
   </div>
 </section>
+
 
 <!-- FOOTER -->
 <footer>
@@ -1618,6 +1663,8 @@
     <span class="ticker-item"><span class="ticker-sym">NIFTY 50</span><span class="tick-up">▲ +0.8%</span><span class="tick-price">24,812</span><span class="ticker-divider"></span></span>
   </div>
 </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 
 <script>
   // ── Nav scroll shrink
@@ -1863,32 +1910,150 @@
   }
 
   // ═══════════════════════════════════════════════════════
-  // EFFECT 2 — 2.5D PARALLAX on Sim Portfolio
+  // EFFECT 2 — SCROLLYTELLING STORY (Sim Trading → Lessons)
+  // True scroll-driven timeline: the visual panel is CSS `position:sticky`
+  // (pinned in the viewport), and every property on it — which stage is
+  // showing, its opacity/scale/rotation, the badge drift, the progress
+  // rail — is a pure function of scroll position, recomputed every rAF
+  // tick. Nothing here is a one-shot "reveal"; scroll up and it reverses.
   // ═══════════════════════════════════════════════════════
-  const simWrap      = document.getElementById('simParallaxWrap');
+  const storyTrack   = document.getElementById('storyTrack');
+  const storySteps   = [
+    document.getElementById('story-step-0'),
+    document.getElementById('story-step-1'),
+  ];
+  const stageSim      = document.getElementById('stageSim');
+  const stageLesson   = document.getElementById('stageLesson');
+  const storyFill     = document.getElementById('storyProgressFill');
+  const storyStageNum = document.getElementById('storyStageNum');
+  const storyStageName= document.getElementById('storyStageName');
+  const isMobileStory = () => window.innerWidth <= 920;
+
+  function clamp01(v) { return Math.max(0, Math.min(1, v)); }
+
+  // How "in focus" a step is: 1 when its centre sits at the viewport
+  // centre, fading to 0 the further it drifts away. Continuous, not binary.
+  function stepFocus(el) {
+    if (!el) return 0;
+    const r  = el.getBoundingClientRect();
+    const vh = window.innerHeight;
+    const centreDist = Math.abs((r.top + r.height / 2) - vh / 2);
+    return clamp01(1 - centreDist / (vh * 0.6));
+  }
+
+  function updateStory() {
+    if (!storyTrack || isMobileStory()) return;
+
+    // — Per-step focus, driven purely by each step's own scroll position —
+    const focus0 = stepFocus(storySteps[0]);
+    const focus1 = stepFocus(storySteps[1]);
+
+    storySteps.forEach((el, i) => {
+      if (!el) return;
+      const f = i === 0 ? focus0 : focus1;
+      el.style.opacity   = String(0.22 + f * 0.78);
+      el.style.transform = `translateY(${(1 - f) * 18}px) scale(${0.98 + f * 0.02})`;
+      el.style.filter    = `blur(${(1 - f) * 2}px)`;
+    });
+
+    // — Crossfade between stages, weighted by which step currently has
+    //   more focus — the visual is literally coupled to the reading position —
+    const totalFocus = focus0 + focus1 + 0.0001;
+    const cp = clamp01(focus1 / totalFocus); // 0 = fully sim, 1 = fully lesson
+
+    if (stageSim) {
+      stageSim.style.opacity   = String(1 - cp);
+      stageSim.style.transform = `scale(${1 - cp * 0.08}) translateY(${-cp * 26}px) rotateX(${cp * 6}deg)`;
+      stageSim.style.pointerEvents = cp > 0.5 ? 'none' : 'auto';
+    }
+    if (stageLesson) {
+      stageLesson.style.opacity   = String(cp);
+      stageLesson.style.transform = `scale(${0.92 + cp * 0.08}) translateY(${(1 - cp) * 26}px) rotateX(${(1 - cp) * -6}deg)`;
+      stageLesson.style.pointerEvents = cp > 0.5 ? 'auto' : 'none';
+    }
+    if (storyStageNum)  storyStageNum.textContent  = cp > 0.5 ? '02' : '01';
+    if (storyStageName) storyStageName.textContent = cp > 0.5 ? 'LESSONS' : 'SIM TRADING';
+
+    // — Overall track progress (0 entering → 1 leaving), drives the rail
+    //   fill and a very small parallax drift on the floating badges even
+    //   while the sticky panel itself is pinned in place —
+    const rect  = storyTrack.getBoundingClientRect();
+    const viewH = window.innerHeight;
+    const total = storyTrack.offsetHeight + viewH;
+    const trackProgress = clamp01((viewH - rect.top) / total);
+
+    if (storyFill) storyFill.style.height = (trackProgress * 100) + '%';
+
+    if (pBadgeProfit && pBadgeXP) {
+      const drift = (trackProgress - 0.5) * 2; // -1 → 1 across the whole story
+      pBadgeProfit.style.transform = `translateY(${drift * -22}px)`;
+      pBadgeXP.style.transform     = `translateY(${drift * -14}px)`;
+    }
+  }
+
   const pBadgeProfit = document.getElementById('pBadgeProfit');
   const pBadgeXP     = document.getElementById('pBadgeXP');
 
-  function updateParallax() {
-    if (!simWrap || !pBadgeProfit || !pBadgeXP) return;
-    const rect  = simWrap.getBoundingClientRect();
-    const viewH = window.innerHeight;
+  // ═══════════════════════════════════════════════════════
+  // EFFECT 3 — FEATURES: sequential scrub unlock (no observer)
+  // ═══════════════════════════════════════════════════════
+  const featuresGrid   = document.getElementById('featuresGrid');
+  const featureCards   = featuresGrid ? Array.from(featuresGrid.querySelectorAll('.feature-card')) : [];
+  const featuresUnlockedNum = document.getElementById('featuresUnlockedNum');
+  const featuresCounterFill = document.getElementById('featuresCounterFill');
 
-    // Skip if fully out of view
-    if (rect.bottom < -100 || rect.top > viewH + 100) return;
+  function updateFeatures() {
+    if (!featuresGrid || !featureCards.length) return;
+    const gridRect = featuresGrid.getBoundingClientRect();
+    const viewH    = window.innerHeight;
+    // Base progress: 0 when grid top enters bottom of viewport, 1 when grid top nears 35% of viewport
+    const base = clamp01((viewH * 0.95 - gridRect.top) / (viewH * 0.6));
 
-    // normalised position of section centre relative to screen centre: -1 (below) → 0 (mid) → +1 (above)
-    const centre   = rect.top + rect.height / 2;
-    const norm     = (viewH / 2 - centre) / (viewH * 0.6); // ±1 range
-    const clamped  = Math.max(-1, Math.min(1, norm));
+    let unlocked = 0;
+    featureCards.forEach((card, i) => {
+      const revealAt = i * 0.1;
+      const fullAt   = revealAt + 0.45;
+      const local    = clamp01((base - revealAt) / (fullAt - revealAt));
+      const eased    = 1 - Math.pow(1 - local, 3);
+      card.style.opacity   = String(eased);
+      card.style.transform = `translateY(${(1 - eased) * 30}px) scale(${0.96 + eased * 0.04})`;
+      if (eased > 0.9) unlocked++;
+    });
 
-    // Profit badge drifts up faster (layer feels closer to camera)
-    const profitY = clamped * -32;
-    // XP badge drifts up at a different rate (mid-layer)
-    const xpY     = clamped * -20;
+    if (featuresUnlockedNum) featuresUnlockedNum.textContent = String(unlocked);
+    if (featuresCounterFill) featuresCounterFill.style.width = (unlocked / featureCards.length * 100) + '%';
+  }
 
-    pBadgeProfit.style.transform = `translateY(${profitY}px)`;
-    pBadgeXP.style.transform     = `translateY(${xpY}px)`;
+  // ═══════════════════════════════════════════════════════
+  // EFFECT 4 — PROOF & CTA: lightweight scrub reveal
+  // ═══════════════════════════════════════════════════════
+  const proofScrub1 = document.getElementById('proofScrub1');
+  const proofScrub2 = document.getElementById('proofScrub2');
+  const ctaSection   = document.getElementById('ctaSection');
+  const ctaScrub     = document.getElementById('ctaScrub');
+  const ctaGlow      = document.getElementById('ctaGlow');
+
+  function scrubIn(el, startVH = 0.92, endVH = 0.6) {
+    if (!el) return;
+    const r  = el.getBoundingClientRect();
+    const vh = window.innerHeight;
+    const p  = clamp01((vh * startVH - r.top) / (vh * (startVH - endVH)));
+    const eased = 1 - Math.pow(1 - p, 3);
+    el.style.opacity   = String(eased);
+    el.style.transform = `translateY(${(1 - eased) * 24}px)`;
+  }
+
+  function updateProofAndCTA() {
+    scrubIn(proofScrub1, 0.95, 0.65);
+    scrubIn(proofScrub2, 0.9, 0.5);
+    scrubIn(ctaScrub, 0.95, 0.55);
+    if (ctaSection && ctaGlow) {
+      const r  = ctaSection.getBoundingClientRect();
+      const vh = window.innerHeight;
+      const p  = clamp01((vh - r.top) / (vh + ctaSection.offsetHeight * 0.5));
+      ctaGlow.style.opacity   = String(0.3 + p * 0.7);
+      ctaGlow.style.transform = `translate(-50%,-50%) scale(${0.6 + p * 0.5})`;
+    }
   }
 
   // ═══════════════════════════════════════════════════════
@@ -1907,7 +2072,7 @@
   }
 
   function runScrollEffects() {
-    // — Card spread —
+    // — Card spread (untouched — the original card animation) —
     if (stackOuter) {
       const rect       = stackOuter.getBoundingClientRect();
       const outerH     = stackOuter.offsetHeight;
@@ -1918,8 +2083,14 @@
       updateSpread(progress);
     }
 
-    // — Parallax badges —
-    updateParallax();
+    // — Scrollytelling story (sim ↔ lessons) —
+    updateStory();
+
+    // — Features sequential unlock —
+    updateFeatures();
+
+    // — Proof + CTA —
+    updateProofAndCTA();
   }
 
   window.addEventListener('scroll', onScroll, { passive: true });
