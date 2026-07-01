@@ -194,75 +194,48 @@
 
   @keyframes slideUp { to { opacity: 1; transform: translateY(0); } }
 
- /* ─── WAITLIST FORM ─── */
+  /* ─── WAITLIST FORM ─── */
+  .waitlist-form {
+    display: flex; gap: 10px; max-width: 440px; margin-bottom: 36px;
+    opacity: 0; transform: translateY(12px);
+    animation: slideUp 0.75s 0.75s forwards;
+  }
+  .waitlist-input {
+    flex: 1;
+    background: var(--card); border: 1px solid var(--border);
+    color: var(--white); padding: 13px 18px; border-radius: 10px;
+    font-family: 'DM Sans', sans-serif; font-size: 0.875rem;
+    outline: none; transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .waitlist-input:focus {
+    border-color: var(--green);
+    box-shadow: 0 0 0 3px rgba(0,255,135,0.1);
+  }
+  .waitlist-input::placeholder { color: var(--muted); }
+  .waitlist-btn {
+    background: var(--green); color: #060B08;
+    border: none; padding: 13px 22px; border-radius: 10px;
+    font-family: 'DM Sans', sans-serif; font-weight: 600;
+    font-size: 0.875rem; cursor: pointer; white-space: nowrap;
+    transition: transform 0.15s, box-shadow 0.2s;
+  }
+  .waitlist-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 28px rgba(0,255,135,0.4);
+  }
+  .waitlist-btn.success { background: var(--mint); pointer-events: none; }
 
-.waitlist-form {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  max-width: 440px;
-  margin-bottom: 36px;
-
-  opacity: 0;
-  transform: translateY(12px);
-  animation: slideUp 0.75s 0.75s forwards;
-}
-
-/* Email + Button Row */
-.waitlist-row {
-  display: flex;
-  gap: 10px;
-}
-
-.waitlist-input {
-  flex: 1;
-  background: var(--card);
-  border: 1px solid var(--border);
-  color: var(--white);
-  padding: 13px 18px;
-  border-radius: 10px;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 0.875rem;
-  outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-.waitlist-input:focus {
-  border-color: var(--green);
-  box-shadow: 0 0 0 3px rgba(0,255,135,0.1);
-}
-
-.waitlist-input::placeholder {
-  color: var(--muted);
-}
-
-.waitlist-row .waitlist-input {
-  flex: 1;
-}
-
-.waitlist-btn {
-  background: var(--green);
-  color: #060B08;
-  border: none;
-  padding: 13px 22px;
-  border-radius: 10px;
-  font-family: 'DM Sans', sans-serif;
-  font-weight: 600;
-  font-size: 0.875rem;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: transform 0.15s, box-shadow 0.2s;
-}
-
-.waitlist-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 28px rgba(0,255,135,0.4);
-}
-
-.waitlist-btn.success {
-  background: var(--mint);
-  pointer-events: none;
-}
+  .hero-stats {
+    display: flex; gap: 32px;
+    opacity: 0; transform: translateY(10px);
+    animation: slideUp 0.75s 0.95s forwards;
+  }
+  .stat-num {
+    font-family: 'Fraunces', serif;
+    font-size: 1.5rem; font-weight: 600; color: var(--green);
+    display: block; letter-spacing: -0.02em;
+  }
+  .stat-label { font-size: 0.72rem; color: var(--muted); font-weight: 400; }
 
   /* ─── MASCOT ─── */
   .hero-visual {
@@ -366,7 +339,7 @@
 
   /* ─── HOW IT WORKS — HORIZONTAL CARD SPREAD ─── */
   .how-section {
-    background: var(--bg2);
+    background: var(--bg);
     padding-top: 100px;
     padding-bottom: 0;
   }
@@ -1127,64 +1100,41 @@
       MintyBath is the sim trading app that teaches <strong>real investing skills</strong> to 11–17 year olds — with fake money, real Indian markets, and zero risk to actual savings.
     </p>
 
-  <!-- ─── WAITLIST FORM ─── -->
+    <!-- ─── WAITLIST FORM ─── -->
 <form class="waitlist-form" id="waitlistForm">
-
-  <!-- Name -->
-  <input
-    type="text"
-    id="userName"
-    class="waitlist-input"
-    placeholder="Full name"
+  <input 
+    type="text" 
+    id="userName" 
+    class="waitlist-input" 
+    placeholder="Your Name" 
     required
   >
-
-  <!-- Email + Button -->
-  <div class="waitlist-row">
-
-    <input
-      type="email"
-      id="userEmail"
-      class="waitlist-input"
-      placeholder="your@email.com"
-      required
-    >
-
-    <button
-      type="submit"
-      class="waitlist-btn"
-      id="submitBtn"
-    >
-      Join waitlist →
-    </button>
-
-  </div>
-
+  <input 
+    type="email" 
+    id="userEmail" 
+    class="waitlist-input" 
+    placeholder="your@email.com" 
+    required
+  >
+  <button type="submit" class="waitlist-btn" id="submitBtn">
+    Get early access →
+  </button>
 </form>
-
-<div class="hero-stats">
-  <div>
-    <span
-      class="stat-num"
-      data-count="2400"
-      data-suffix="+"
-      data-prefix=""
-    >
-      2,400+
-    </span>
-    <span class="stat-label">on waitlist</span>
+    <div class="hero-stats">
+      <div>
+        <span class="stat-num" data-count="2400" data-suffix="+" data-prefix="">2,400+</span>
+        <span class="stat-label">on waitlist</span>
+      </div>
+      <div>
+        <span class="stat-num">Free</span>
+        <span class="stat-label">to start</span>
+      </div>
+      <div>
+        <span class="stat-num">BSE/NSE</span>
+        <span class="stat-label">live market data</span>
+      </div>
+    </div>
   </div>
-
-  <div>
-    <span class="stat-num">Free</span>
-    <span class="stat-label">to start</span>
-  </div>
-
-  <div>
-    <span class="stat-num">BSE/NSE</span>
-    <span class="stat-label">live market data</span>
-  </div>
-</div>
 
   <!-- MASCOT + FLOAT CARDS -->
   <div class="hero-visual">
