@@ -1678,7 +1678,7 @@
   const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
   // 2. Handle the Form Submission
-  document.getElementById('cta-form-supabase').addEventListener('submit', async (e) => {
+document.getElementById('cta-form-supabase').addEventListener('submit', async (e) => {
     e.preventDefault();
     
     const nameInput = document.getElementById('cta-name-supabase');
@@ -1700,10 +1700,15 @@
 
       if (error) throw error;
 
-      // 4. Success state (Resets inputs and shows confirmation without breaking layout)
-      submitBtn.innerText = 'Added! 🎉';
+      // 4. Success state — back to your original animation
+      submitBtn.textContent = "You're on the list!";
+      submitBtn.style.background = 'var(--mint)';
+      submitBtn.style.pointerEvents = 'none';
+
       nameInput.value = '';
       emailInput.value = '';
+
+      showToast('+1 on the list');
       
     } catch (error) {
       console.error('Supabase Error:', error.message);
