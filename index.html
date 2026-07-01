@@ -476,21 +476,45 @@
   .stack-end-pad { height: 80px; background: var(--bg2); }
 
   /* ─── SIM TRADING — 2.5D PARALLAX ─── */
-  .sim-section {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 72px;
-    align-items: center;
-    position: relative;
-  }
-  /* Wrap holds frame + floating badges, enabling relative stacking */
-  .sim-parallax-wrap {
-    position: relative;
-  }
-  .sim-ui {
-    background: var(--card); border: 1px solid var(--border);
-    border-radius: 18px; overflow: hidden;
-    position: relative; z-index: 1;
-    will-change: transform;
-  }
+/* --- New Layout Structure for .sim-section --- */
+.sim-section {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  background-color: var(--bg);
+  overflow: hidden; /* Stops floating badges from breaking your horizontal scrollbars */
+}
+
+/* Create a structured central canvas where elements safely live side-by-side */
+.sim-canvas-inner {
+  position: relative;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 4%;
+  display: grid;
+  grid-template-columns: 1fr 1.2fr; /* Explicitly forces a balanced 2-column channel split */
+  gap: 80px;
+  align-items: center;
+}
+
+/* Left side text column container */
+.sim-content {
+  position: relative;
+  z-index: 5;
+}
+
+/* Right side graphic wrapper — stays locked inside its grid column slot */
+.sim-parallax-wrap {
+  position: relative;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2;
+}
   /* Floating parallax badges — sit above the card, move faster on scroll */
   .parallax-badge {
     position: absolute;
@@ -871,46 +895,138 @@
     *, *::before, *::after { animation: none !important; transition: none !important; }
   }
 
-@media (max-width: 768px) {
-    /* ... keep your other mobile overrides for nav, hero, etc. ... */
-
-    .stack-scroll-outer {
-        height: 200vh; /* Scaled down for mobile so you don't scroll forever */
-        width: 100%;
+ @media (max-width: 768px) {
+    nav {
+        padding: 14px 20px;
     }
-    .stack-sticky {
-        position: sticky;
-        top: 0;
-        height: 100vh;
+    nav.scrolled {
+        padding: 10px 20px;
+    }
+    /* Hide desktop nav links on mobile to save space */
+    .nav-links {
+        display: none; 
+    }
+}
+
+ @media (max-width: 768px) {
+    .hero {
+        flex-direction: column;
+        padding: 100px 20px 60px;
+        text-align: center;
+        gap: 30px;
+        min-height: auto;
+    }
+    .hero-content {
+        max-width: 100%;
         display: flex;
         flex-direction: column;
         align-items: center;
-        justify-content: center;
-        overflow: hidden;
-        width: 100%;
     }
-    .stack-frame {
-        display: flex;
-        flex-direction: row !important;
+    .hero-sub {
+        max-width: 100%;
+    }
+    /* Stack the email form inputs vertically */
+    .waitlist-form {
+        flex-direction: column;
         width: 100%;
         max-width: 100%;
-        padding: 0 20px;
+        gap: 12px;
+    }
+    .waitlist-input, .waitlist-btn {
+        width: 100%;
+    }
+    /* Adjust counter stats alignment */
+    .hero-stats {
+        justify-content: center;
+        gap: 20px;
+    }
+    /* Contain the absolute floating badge cards so they don't break viewport width */
+    .hero-visual {
+        width: 100%;
+        min-height: 380px;
+    }
+    .float-card.card-portfolio {
+        right: 10px;
+        top: 0;
+    }
+    .float-card.card-lesson {
+        left: 10px;
+        bottom: 10px;
+    }
+}
+
+ @media (max-width: 768px) {
+    section {
+        padding: 60px 20px;
+    }
+    
+    .sim-section, .lessons-section {
+        grid-template-columns: 1fr;
+        gap: 40px;
+    }
+    
+    /* Flip order if you want text to stay on top of the UI element on mobile */
+    .sim-section {
+        display: flex;
+        flex-direction: column-reverse;
+    }
+}
+@media (max-width: 768px) {
+    /* Collapse feature list cards to single rows */
+    .features-grid {
+        grid-template-columns: 1fr;
         gap: 16px;
     }
-    .scard {
-        flex-shrink: 0;
-        width: 85vw !important; /* Forces cards to stay perfectly sized relative to the phone viewport */
-        max-width: 290px;
-        height: auto;
-        min-height: 340px;
-        padding: 24px 20px;
+    
+    /* Responsive Call-to-Action container */
+    .cta-section {
+        padding: 80px 20px;
     }
+    .cta-form {
+        flex-direction: column;
+        gap: 12px;
+    }
+    .cta-input, .cta-btn {
+        width: 100%;
+    }
+}
+
+ @media (max-width: 768px) {
+    .stack-scroll-outer {
+        height: auto; /* Turn off artificial scroll heights */
+    }
+    .stack-sticky {
+        position: relative;
+        height: auto;
+        padding: 40px 0;
+    }
+    .stack-frame {
+        flex-direction: column;
+        padding: 0;
+    }
+    .scard {
+        width: 100%;
+    }
+}
+
+ .sim-glow-radial {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 120%; /* Bigger than the mockup itself */
+  height: 120%;
+  background: radial-gradient(circle, rgba(46, 213, 115, 0.15) 0%, rgba(0, 0, 0, 0) 70%);
+  z-index: -1; /* Sits perfectly behind the mockup */
+  pointer-events: none;
+  filter: blur(40px);
 }
  
 </style>
 </head>
 <body>
 
+</div>
 <!-- NAV -->
 <nav id="nav">
   
@@ -1177,9 +1293,10 @@
         </div>
       </div>
 
-    </div><!-- /sim-parallax-wrap -->
+</div><!-- /sim-parallax-wrap (This closes the mockup side completely) -->
 
-    <div class="reveal-right" style="transition-delay:0.1s">
+    <!-- LEFT SIDE: Text Content stays structural and separate -->
+    <div class="sim-content">
       <div class="section-eyebrow">Sim Trading</div>
       <h2 class="section-title">Real stocks.<br><em>Zero risk.</em></h2>
       <p class="section-sub" style="margin-bottom:26px">
@@ -1204,8 +1321,9 @@
         </li>
       </ul>
     </div>
-  </div>
-</section>
+
+  </div> <!-- Closes .sim-canvas-inner -->
+</section> <!-- Closes #features -->
 
 <!-- LESSONS -->
 <section id="lessons" style="background:var(--bg2)">
@@ -1439,6 +1557,8 @@
     <span class="ticker-item"><span class="ticker-sym">NIFTY 50</span><span class="tick-up">▲ +0.8%</span><span class="tick-price">24,812</span><span class="ticker-divider"></span></span>
   </div>
 </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 
 <script>
   // ── Nav scroll shrink
@@ -1645,65 +1765,56 @@
   requestAnimationFrame(() => requestAnimationFrame(measureOffsets));
   window.addEventListener('resize', measureOffsets);
 
-function updateSpread(progress) {
-    const isMobile = window.innerWidth <= 768;
+  function updateSpread(progress) {
+    // progress 0→1 across the full stackOuter scroll range
+    // Phase A (0→0.15): first card fades in from centre, no spread yet
+    // Phase B (0.15→0.55): cards 1 and 2 reveal and spread begins
+    // Phase C (0.55→1.0): all three fully spread, accent lines fill
 
-    if (isMobile) {
-        // MOBILE LOGIC: Uses your exact variables cleanly
-        if (stackFrame) {
-            // Calculates exactly how much card content overflows the phone viewport width
-            const maxMove = stackFrame.scrollWidth - window.innerWidth + 40; 
-            const moveX = progress * maxMove;
-            stackFrame.style.transform = `translateX(${-Math.max(0, moveX)}px) translateY(0px) scale(1)`;
-        }
-        
-        // Reset individual card positions so they sit in a flat horizontal line
-        scards.forEach((card) => {
-            card.style.transform = 'none';
-            card.style.opacity = '1';
-        });
+    const N = scards.length;
 
-        // Fill lines progressively as you swipe by them
-        sfills.forEach((fill, i) => {
-            const cardProgress = progress * scards.length;
-            const width = Math.min(Math.max((cardProgress - i) * 100, 0), 100);
-            fill.style.width = `${width}%`;
-        });
-    } else {
-        // DESKTOP LOGIC: 100% exact copy of your original code layout
-        const N = scards.length;
-        scards.forEach((card, i) => {
-            const revealAt = i * 0.2;      // 0, 0.2, 0.4
-            const fullAt   = revealAt + 0.35; // 0.35, 0.55, 0.75
+    scards.forEach((card, i) => {
+      // Each card reveals at a staggered threshold
+      const revealAt  = i * 0.2;          // 0, 0.2, 0.4
+      const fullAt    = revealAt + 0.35;   // 0.35, 0.55, 0.75
 
-            const local = Math.max(0, Math.min(1, (progress - revealAt) / (fullAt - revealAt)));
-            const eased = 1 - Math.pow(1 - local, 3);
+      // local: 0 (not yet revealed) → 1 (fully in position)
+      const local = Math.max(0, Math.min(1, (progress - revealAt) / (fullAt - revealAt)));
 
-            const offset = cardOffsets[i] || 0;
-            const tx = offset * (eased - 1); 
-            const ty = (1 - eased) * 40;     
-            const op = eased;
-            const sc = 0.88 + eased * 0.12;  
+      // easeOutCubic for snappy feel
+      const eased = 1 - Math.pow(1 - local, 3);
 
-            card.style.transform = `translateX(${tx}px) translateY(${ty}px) scale(${sc})`;
-            card.style.opacity = op;
-        });
+      // Translate from centre → final position
+      const offset = cardOffsets[i] || 0;
+      const tx = offset * (eased - 1); // starts at -offset (at centre), ends at 0 (natural pos)
+      const ty = (1 - eased) * 40;     // subtle rise from below
+      const op = eased;
+      const sc = 0.88 + eased * 0.12;  // scale from 0.88 → 1.0
 
-        sfills.forEach((fill, i) => {
-            const start = 0.1 + i * 0.25;
-            const end   = 0.35 + i * 0.25;
-            const p = Math.max(0, Math.min(1, (progress - start) / (end - start)));
-            fill.style.width = `${p * 100}%`;
-        });
-    }
+      card.style.transform = `translateX(${tx}px) translateY(${ty}px) scale(${sc})`;
+      card.style.opacity   = String(op);
 
-    // Active dots logic works globally for both screens
-    const activeIdx = Math.min(Math.floor(progress * scards.length), scards.length - 1);
-    sdots.forEach((dot, i) => {
-        if (i === activeIdx) dot.classList.add('active');
-        else dot.classList.remove('active');
+      // Top accent line fills as card settles
+      sfills[i].style.width = (eased * 100) + '%';
     });
-}
+
+    // Active dot: whichever card is most recently fully visible
+    const active = Math.min(N - 1, Math.floor(progress * N * 1.1));
+    sdots.forEach((d, i) => d.classList.toggle('active', i === active));
+  }
+
+  // ═══════════════════════════════════════════════════════
+  // EFFECT 2 — 2.5D PARALLAX on Sim Portfolio
+  // ═══════════════════════════════════════════════════════
+  const simWrap      = document.getElementById('simParallaxWrap');
+  const pBadgeProfit = document.getElementById('pBadgeProfit');
+  const pBadgeXP     = document.getElementById('pBadgeXP');
+
+  function updateParallax() {
+    if (!simWrap || !pBadgeProfit || !pBadgeXP) return;
+    const rect  = simWrap.getBoundingClientRect();
+    const viewH = window.innerHeight;
+
     // Skip if fully out of view
     if (rect.bottom < -100 || rect.top > viewH + 100) return;
 
