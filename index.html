@@ -1608,11 +1608,11 @@
   <div class="cta-scrub" id="ctaScrub">
     <h2 class="cta-headline">Your portfolio<br>starts <em>today.</em></h2>
     <p class="cta-sub">Join the waitlist. Be first when MintyBath launches. It's free forever for early signups.</p>
-    <form class="cta-form" id="cta-form" onsubmit="event.preventDefault(); joinWaitlist('cta');">
-      <input type="text" class="cta-input" id="cta-name" placeholder="Your name" required>
-      <input type="email" class="cta-input" id="cta-email" placeholder="your@email.com" required>
-      <button type="submit" class="cta-btn">Join waitlist →</button>
-    </form>
+    <form class="cta-form" id="cta-form-supabase">
+  <input type="text" class="cta-input" id="cta-name-supabase" placeholder="Your name" required>
+  <input type="email" class="cta-input" id="cta-email-supabase" placeholder="your@email.com" required>
+  <button type="submit" class="cta-btn" id="cta-btn-supabase">Join waitlist →</button>
+</form>
     <p class="cta-note">No spam ever. We'll email you when we launch — that's it.</p>
   </div>
 </section>
@@ -1670,7 +1670,51 @@
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+ <script>
+  // 1. Initialize Supabase
+  const SUPABASE_URL = 'https://eoknpjxbjwkmctqqagwn.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVva25wanhiandrbWN0cXFhZ3duIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI5MTIzNDUsImV4cCI6MjA5ODQ4ODM0NX0.N_i0O3pQuDm-hrd3q1k-_NXqVJvxnCD1M8l1GGaOVvU';
+  const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+  // 2. Handle the Form Submission
+  document.getElementById('cta-form-supabase').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const nameInput = document.getElementById('cta-name-supabase');
+    const emailInput = document.getElementById('cta-email-supabase');
+    const submitBtn = document.getElementById('cta-btn-supabase');
+    
+    const name = nameInput.value;
+    const email = emailInput.value;
+
+    // Prevent double submissions while keeping layout steady
+    submitBtn.disabled = true;
+    submitBtn.innerText = 'Joining...';
+
+    try {
+      // 3. Insert rows into your Supabase table (Make sure table name is 'waitlist')
+      const { error } = await supabaseClient
+        .from('waitlist')
+        .insert([{ name: name, email: email }]);
+
+      if (error) throw error;
+
+      // 4. Success state (Resets inputs and shows confirmation without breaking layout)
+      submitBtn.innerText = 'Added! 🎉';
+      nameInput.value = '';
+      emailInput.value = '';
+      
+    } catch (error) {
+      console.error('Supabase Error:', error.message);
+      alert('Something went wrong. Please try again!');
+      
+      // Reset button text so they can try again
+      submitBtn.disabled = false;
+      submitBtn.innerText = 'Join waitlist →';
+    }
+  });
+</script>
 <script>
   // ── Nav scroll shrink
   const nav = document.getElementById('nav');
