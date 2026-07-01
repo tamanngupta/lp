@@ -870,6 +870,121 @@
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation: none !important; transition: none !important; }
   }
+
+ @media (max-width: 768px) {
+    nav {
+        padding: 14px 20px;
+    }
+    nav.scrolled {
+        padding: 10px 20px;
+    }
+    /* Hide desktop nav links on mobile to save space */
+    .nav-links {
+        display: none; 
+    }
+}
+
+ @media (max-width: 768px) {
+    .hero {
+        flex-direction: column;
+        padding: 100px 20px 60px;
+        text-align: center;
+        gap: 30px;
+        min-height: auto;
+    }
+    .hero-content {
+        max-width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    .hero-sub {
+        max-width: 100%;
+    }
+    /* Stack the email form inputs vertically */
+    .waitlist-form {
+        flex-direction: column;
+        width: 100%;
+        max-width: 100%;
+        gap: 12px;
+    }
+    .waitlist-input, .waitlist-btn {
+        width: 100%;
+    }
+    /* Adjust counter stats alignment */
+    .hero-stats {
+        justify-content: center;
+        gap: 20px;
+    }
+    /* Contain the absolute floating badge cards so they don't break viewport width */
+    .hero-visual {
+        width: 100%;
+        min-height: 380px;
+    }
+    .float-card.card-portfolio {
+        right: 10px;
+        top: 0;
+    }
+    .float-card.card-lesson {
+        left: 10px;
+        bottom: 10px;
+    }
+}
+
+ @media (max-width: 768px) {
+    section {
+        padding: 60px 20px;
+    }
+    
+    .sim-section, .lessons-section {
+        grid-template-columns: 1fr;
+        gap: 40px;
+    }
+    
+    /* Flip order if you want text to stay on top of the UI element on mobile */
+    .sim-section {
+        display: flex;
+        flex-direction: column-reverse;
+    }
+}
+@media (max-width: 768px) {
+    /* Collapse feature list cards to single rows */
+    .features-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+    
+    /* Responsive Call-to-Action container */
+    .cta-section {
+        padding: 80px 20px;
+    }
+    .cta-form {
+        flex-direction: column;
+        gap: 12px;
+    }
+    .cta-input, .cta-btn {
+        width: 100%;
+    }
+}
+
+ @media (max-width: 768px) {
+    .stack-scroll-outer {
+        height: auto; /* Turn off artificial scroll heights */
+    }
+    .stack-sticky {
+        position: relative;
+        height: auto;
+        padding: 40px 0;
+    }
+    .stack-frame {
+        flex-direction: column;
+        padding: 0;
+    }
+    .scard {
+        width: 100%;
+    }
+}
+ 
 </style>
 </head>
 <body>
