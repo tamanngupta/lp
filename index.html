@@ -732,61 +732,24 @@
   }
   .xp-label { font-family: 'DM Mono', monospace; font-size: 0.68rem; color: var(--green); }
 
-  /* ─── FEATURES — scroll-scrubbed sequential unlock ─── */
-  .features-section { background: var(--bg2); position: relative; }
-  .features-head-row {
-    display: flex; align-items: flex-end; justify-content: space-between;
-    flex-wrap: wrap; gap: 16px;
+  /* ─── FEATURE MINI GRID (used inside scrollytelling stage 3) ─── */
+  .mini-feature-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 16px; padding: 22px;
   }
-  .features-counter {
-    display: inline-flex; align-items: center; gap: 8px;
-    font-family: 'DM Mono', monospace; font-size: 0.72rem;
-    color: var(--muted); letter-spacing: 0.04em;
-    padding-bottom: 6px;
-  }
-  .features-counter b { color: var(--green); font-weight: 600; }
-  .features-counter-rail {
-    width: 64px; height: 3px; background: var(--border); border-radius: 3px; overflow: hidden;
-  }
-  .features-counter-fill {
-    height: 100%; width: 0%; background: var(--green); border-radius: 3px;
-  }
-  .features-grid {
-    display: grid; grid-template-columns: repeat(3, 1fr);
-    gap: 14px; margin-top: 56px;
-  }
-  .feature-card {
-    background: var(--card); border: 1px solid var(--border);
-    border-radius: 14px; padding: 30px;
-    opacity: 0; transform: translateY(30px) scale(0.96);
-    transition: transform 0.2s, border-color 0.25s, box-shadow 0.25s;
-    cursor: default;
-    will-change: opacity, transform;
-  }
-  .feature-card:hover {
-    transform: translateY(-4px);
-    border-color: rgba(0,255,135,0.16);
-    box-shadow: 0 16px 48px rgba(0,0,0,0.32);
-  }
-  .feature-icon {
-    width: 42px; height: 42px; border-radius: 10px;
+  .mini-feature-item { display: flex; flex-direction: column; gap: 8px; }
+  .mini-feature-icon {
+    width: 34px; height: 34px; border-radius: 9px;
     display: flex; align-items: center; justify-content: center;
-    margin-bottom: 18px;
-    background: rgba(0,255,135,0.05);
-    border: 1px solid rgba(0,255,135,0.1);
+    background: rgba(0,255,135,0.06);
+    border: 1px solid rgba(0,255,135,0.12);
     color: var(--green);
   }
-  .feature-title {
-    font-family: 'Fraunces', serif;
-    font-size: 1.05rem; font-weight: 600; margin-bottom: 9px; line-height: 1.3;
+  .mini-feature-label {
+    font-family: 'Fraunces', serif; font-size: 0.82rem; font-weight: 600; line-height: 1.3;
   }
-  .feature-desc { font-size: 0.83rem; color: var(--muted); line-height: 1.65; font-weight: 400; }
 
-  /* ─── PROOF — scroll-scrubbed ─── */
-  .proof-section {
-    display: flex; flex-direction: column; align-items: center; text-align: center;
-  }
-  .proof-scrub { opacity: 0; transform: translateY(24px); will-change: opacity, transform; }
+  /* ─── PROOF (used inside scrollytelling stage 4) ─── */
   .proof-avatars { display: flex; margin-bottom: 14px; }
   .proof-avatar {
     width: 36px; height: 36px; border-radius: 50%;
@@ -803,7 +766,7 @@
     background: rgba(0,255,135,0.07);
     border: 1px solid rgba(0,255,135,0.16);
     padding: 5px 13px; border-radius: 100px;
-    margin-bottom: 56px; font-weight: 500; letter-spacing: 0.03em;
+    font-weight: 500; letter-spacing: 0.03em;
   }
   .wl-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--green); animation: pulse 2.2s infinite; }
 
@@ -961,7 +924,6 @@
     .nav-links { display: none; }
     .hero { flex-direction: column; padding: 100px 24px 80px; }
     section { padding: 80px 24px; }
-    .features-grid { grid-template-columns: 1fr; }
     footer { flex-direction: column; gap: 16px; text-align: center; padding: 28px 24px 72px; }
     .float-card { display: none; }
     /* Card spread mobile — stack vertically, no scroll animation */
@@ -980,7 +942,7 @@
     .story-sticky-col { order: -1; }
     .story-sticky { position: relative; top: 0; height: 400px; }
     .story-stage { position: relative; inset: auto; opacity: 1 !important; transform: none !important; }
-    #stageLesson { display: none; }
+    #stageLesson, #stageFeatures, #stageProof { display: none; }
     .story-stage-label { display: none; }
   }
 
@@ -1056,12 +1018,6 @@
     .story-sticky { height: 340px; }
 }
 @media (max-width: 768px) {
-    /* Collapse feature list cards to single rows */
-    .features-grid {
-        grid-template-columns: 1fr;
-        gap: 16px;
-    }
-    
     /* Responsive Call-to-Action container */
     .cta-section {
         padding: 80px 20px;
@@ -1118,8 +1074,8 @@
   </a>
   <ul class="nav-links">
     <li><a href="#how">How it works</a></li>
-    <li><a href="#features">Features</a></li>
-    <li><a href="#lessons">Learn</a></li>
+    <li><a href="#story">Features</a></li>
+    <li><a href="#story">Learn</a></li>
   </ul>
   <button class="nav-cta" onclick="scrollToWaitlist()">Join waitlist →</button>
 </nav>
@@ -1273,7 +1229,7 @@
   <div class="stack-end-pad"></div>
 </section>
 
-<!-- SCROLLYTELLING: SIM TRADING → LESSONS -->
+<!-- SCROLLYTELLING: SIM TRADING → LESSONS → FEATURES → PROOF -->
 <!-- Sticky-pinned visual on the right, scrubbed by scroll position.
      No IntersectionObserver here — everything is driven every rAF
      tick off getBoundingClientRect() in the JS below (see EFFECT 2). -->
@@ -1336,11 +1292,45 @@
           </li>
         </ul>
       </div>
+
+      <div class="story-step" id="story-step-2" data-step="2">
+        <div class="story-step-tag" style="color:var(--gold)">03 — Everything Included</div>
+        <h2 class="section-title">Built for the <em>next<br>generation</em> of investors.</h2>
+        <p class="section-sub" style="margin-bottom:26px">
+          Indian markets, gamified learning, a parent dashboard, and an AI coach that never gets tired of your questions — all in one app, zero real money at risk.
+        </p>
+        <ul class="check-list">
+          <li>
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="var(--gold)" stroke-width="1.8" stroke-linecap="round"><path d="M3 8L6.5 11.5L13 5"/></svg>
+            Sensex, Nifty 50 and brands you already know
+          </li>
+          <li>
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="var(--gold)" stroke-width="1.8" stroke-linecap="round"><path d="M3 8L6.5 11.5L13 5"/></svg>
+            Parent dashboard — full visibility, no surprises
+          </li>
+          <li>
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="var(--gold)" stroke-width="1.8" stroke-linecap="round"><path d="M3 8L6.5 11.5L13 5"/></svg>
+            Minty AI Coach, always on and always patient
+          </li>
+          <li>
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="var(--gold)" stroke-width="1.8" stroke-linecap="round"><path d="M3 8L6.5 11.5L13 5"/></svg>
+            Zero real money, zero payments, zero risk
+          </li>
+        </ul>
+      </div>
+
+      <div class="story-step" id="story-step-3" data-step="3">
+        <div class="story-step-tag" style="color:var(--green)">04 — Real Results</div>
+        <h2 class="section-title">Real teens.<br><em>Real "aha" moments.</em></h2>
+        <p class="section-sub" style="margin-bottom:26px">
+          2,400+ teens are already on the waitlist — building the confidence and habits it used to take a finance degree to learn.
+        </p>
+      </div>
     </div><!-- /story-track -->
 
     <div class="story-sticky-col">
       <div class="story-sticky" id="storySticky">
-        <div class="story-stage-label">STAGE <span id="storyStageNum">01</span> / 02 · <span id="storyStageName">SIM TRADING</span></div>
+        <div class="story-stage-label">STAGE <span id="storyStageNum">01</span> / 04 · <span id="storyStageName">SIM TRADING</span></div>
 
         <!-- STAGE A — Sim portfolio mockup -->
         <div class="story-stage" id="stageSim">
@@ -1473,130 +1463,122 @@
           </div>
         </div><!-- /stageLesson -->
 
+        <!-- STAGE C — Features mini grid -->
+        <div class="story-stage" id="stageFeatures">
+          <div class="sim-ui">
+            <div class="sim-header">
+              <div class="sim-title-bar">
+                <div class="dot dot-r"></div>
+                <div class="dot dot-y"></div>
+                <div class="dot dot-g"></div>
+              </div>
+              <div class="sim-tab-label">FEATURES · 6/6 UNLOCKED</div>
+            </div>
+            <div class="mini-feature-grid">
+              <div class="mini-feature-item">
+                <div class="mini-feature-icon">
+                  <svg width="18" height="18" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M11 2C7 2 4 5 4 9C4 14 11 20 11 20C11 20 18 14 18 9C18 5 15 2 11 2Z"/>
+                    <circle cx="11" cy="9" r="2.5"/>
+                  </svg>
+                </div>
+                <div class="mini-feature-label">Indian Markets First</div>
+              </div>
+              <div class="mini-feature-item">
+                <div class="mini-feature-icon">
+                  <svg width="18" height="18" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="7" width="18" height="10" rx="5"/>
+                    <path d="M8 11H6M7 10V12M14 11H16M15 10V12"/>
+                    <circle cx="14.5" cy="10" r="0.5" fill="currentColor"/>
+                  </svg>
+                </div>
+                <div class="mini-feature-label">Gamified Everything</div>
+              </div>
+              <div class="mini-feature-item">
+                <div class="mini-feature-icon">
+                  <svg width="18" height="18" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="8" cy="7" r="2.5"/>
+                    <circle cx="14" cy="7" r="2.5"/>
+                    <path d="M3 18C3 15 5 13 8 13"/>
+                    <path d="M19 18C19 15 17 13 14 13"/>
+                    <path d="M8 13H14C16 13 18 15 18 18H4C4 15 6 13 8 13Z"/>
+                  </svg>
+                </div>
+                <div class="mini-feature-label">Parent Dashboard</div>
+              </div>
+              <div class="mini-feature-item">
+                <div class="mini-feature-icon">
+                  <svg width="18" height="18" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="4" y="10" width="14" height="10" rx="2"/>
+                    <path d="M7 10V7C7 4.8 8.8 3 11 3C13.2 3 15 4.8 15 7V10"/>
+                    <circle cx="11" cy="15" r="1.5" fill="currentColor" stroke="none"/>
+                  </svg>
+                </div>
+                <div class="mini-feature-label">Zero Real Money</div>
+              </div>
+              <div class="mini-feature-item">
+                <div class="mini-feature-icon">
+                  <svg width="18" height="18" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="4" width="16" height="14" rx="2"/>
+                    <path d="M7 8H15M7 11H15M7 14H11"/>
+                  </svg>
+                </div>
+                <div class="mini-feature-label">Market News, Decoded</div>
+              </div>
+              <div class="mini-feature-item">
+                <div class="mini-feature-icon">
+                  <svg width="18" height="18" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="4" y="7" width="14" height="11" rx="3"/>
+                    <path d="M11 7V4M9 4H13"/>
+                    <circle cx="8.5" cy="12.5" r="1.5" fill="currentColor" stroke="none"/>
+                    <circle cx="13.5" cy="12.5" r="1.5" fill="currentColor" stroke="none"/>
+                    <path d="M9 15.5H13"/>
+                  </svg>
+                </div>
+                <div class="mini-feature-label">Minty AI Coach</div>
+              </div>
+            </div>
+          </div><!-- /sim-ui -->
+        </div><!-- /stageFeatures -->
+
+        <!-- STAGE D — Proof / testimonial -->
+        <div class="story-stage" id="stageProof">
+          <div class="sim-ui">
+            <div class="sim-header">
+              <div class="sim-title-bar">
+                <div class="dot dot-r"></div>
+                <div class="dot dot-y"></div>
+                <div class="dot dot-g"></div>
+              </div>
+              <div class="sim-tab-label">FEEDBACK · LIVE</div>
+            </div>
+            <div style="padding:26px 24px 28px">
+              <div class="proof-avatars">
+                <div class="proof-avatar" style="font-size:1rem;background:#2A3D2E">👦</div>
+                <div class="proof-avatar" style="font-size:1rem;background:#243828">👧</div>
+                <div class="proof-avatar" style="font-size:1rem;background:#2A3D2E">🧑</div>
+                <div class="proof-avatar" style="font-size:1rem;background:#243828">👧🏽</div>
+                <div class="proof-avatar" style="font-size:1rem;background:#2A3D2E">👦🏻</div>
+                <div class="proof-avatar" style="background:var(--green);color:#060B08;font-size:0.58rem;font-weight:700;font-family:'DM Mono',monospace">+2.4k</div>
+              </div>
+              <div class="waitlist-count" style="margin-bottom:18px">
+                <span class="wl-dot"></span>
+                2,400+ teens already on the waitlist
+              </div>
+              <div style="font-family:'Fraunces',serif;font-size:1.15rem;font-weight:600;line-height:1.45;margin-bottom:12px">
+                "I finally understand what <em style="font-style:italic;color:var(--green)">my dad means</em> when he talks about the market."
+              </div>
+              <div style="font-size:0.78rem;color:var(--muted)">— Riya, 15, Delhi</div>
+            </div>
+          </div><!-- /sim-ui -->
+        </div><!-- /stageProof -->
+
       </div><!-- /story-sticky -->
     </div><!-- /story-sticky-col -->
 
   </div><!-- /story-grid -->
 </section>
 
-
-<!-- FEATURES — scroll-scrubbed sequential unlock, no observer, pure rAF -->
-<section class="features-section" id="featuresSection">
-  <div class="features-head-row">
-    <div>
-      <div class="section-eyebrow">Everything included</div>
-      <h2 class="section-title">Built for the <em>next<br>generation</em> of investors.</h2>
-    </div>
-    <div class="features-counter">
-      <span><b id="featuresUnlockedNum">0</b>/6 unlocked</span>
-      <div class="features-counter-rail"><div class="features-counter-fill" id="featuresCounterFill"></div></div>
-    </div>
-  </div>
-  <div class="features-grid" id="featuresGrid">
-
-    <div class="feature-card" data-fi="0">
-      <div class="feature-icon">
-        <!-- Indian flag / map icon -->
-        <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M11 2C7 2 4 5 4 9C4 14 11 20 11 20C11 20 18 14 18 9C18 5 15 2 11 2Z"/>
-          <circle cx="11" cy="9" r="2.5"/>
-        </svg>
-      </div>
-      <div class="feature-title">Indian Markets First</div>
-      <p class="feature-desc">Learn with Sensex, Nifty 50, and the brands you already know — Tata, Zomato, Paytm. No American stocks to confuse the picture.</p>
-    </div>
-
-    <div class="feature-card" data-fi="1">
-      <div class="feature-icon">
-        <!-- Game controller icon -->
-        <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="2" y="7" width="18" height="10" rx="5"/>
-          <path d="M8 11H6M7 10V12M14 11H16M15 10V12"/>
-          <circle cx="14.5" cy="10" r="0.5" fill="currentColor"/>
-        </svg>
-      </div>
-      <div class="feature-title">Gamified Everything</div>
-      <p class="feature-desc">Streaks, XP, badges, leaderboards. Learning finance should feel like a game — because then you actually do it every day.</p>
-    </div>
-
-    <div class="feature-card" data-fi="2">
-      <div class="feature-icon">
-        <!-- Family / people icon -->
-        <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="8" cy="7" r="2.5"/>
-          <circle cx="14" cy="7" r="2.5"/>
-          <path d="M3 18C3 15 5 13 8 13"/>
-          <path d="M19 18C19 15 17 13 14 13"/>
-          <path d="M8 13H14C16 13 18 15 18 18H4C4 15 6 13 8 13Z"/>
-        </svg>
-      </div>
-      <div class="feature-title">Parent Dashboard</div>
-      <p class="feature-desc">Parents see exactly what their teen is learning. No surprises. Progress reports, lesson summaries, and weekly portfolio snapshots.</p>
-    </div>
-
-    <div class="feature-card" data-fi="3">
-      <div class="feature-icon">
-        <!-- Lock icon -->
-        <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="4" y="10" width="14" height="10" rx="2"/>
-          <path d="M7 10V7C7 4.8 8.8 3 11 3C13.2 3 15 4.8 15 7V10"/>
-          <circle cx="11" cy="15" r="1.5" fill="currentColor" stroke="none"/>
-        </svg>
-      </div>
-      <div class="feature-title">Zero Real Money</div>
-      <p class="feature-desc">100% simulated. No payments, no in-app purchases, no risk. Just the mindset of an investor, built safely before the stakes are real.</p>
-    </div>
-
-    <div class="feature-card" data-fi="4">
-      <div class="feature-icon">
-        <!-- Newspaper / feed icon -->
-        <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="3" y="4" width="16" height="14" rx="2"/>
-          <path d="M7 8H15M7 11H15M7 14H11"/>
-        </svg>
-      </div>
-      <div class="feature-title">Market News, Decoded</div>
-      <p class="feature-desc">When RBI hikes rates or a company releases earnings, Minty explains what it means for your portfolio — in language that actually makes sense.</p>
-    </div>
-
-    <div class="feature-card" data-fi="5">
-      <div class="feature-icon">
-        <!-- AI / bot icon -->
-        <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="4" y="7" width="14" height="11" rx="3"/>
-          <path d="M11 7V4M9 4H13"/>
-          <circle cx="8.5" cy="12.5" r="1.5" fill="currentColor" stroke="none"/>
-          <circle cx="13.5" cy="12.5" r="1.5" fill="currentColor" stroke="none"/>
-          <path d="M9 15.5H13"/>
-        </svg>
-      </div>
-      <div class="feature-title">Minty AI Coach</div>
-      <p class="feature-desc">Ask Minty anything. "Why did my Infosys stock drop?" or "What's a good first SIP?" — always available, always patient, never condescending.</p>
-    </div>
-
-  </div>
-</section>
-
-<!-- SOCIAL PROOF — scroll-scrubbed -->
-<section class="proof-section" style="padding:80px 56px" id="proofSection">
-  <div class="proof-avatars proof-scrub" id="proofScrub1">
-    <div class="proof-avatar" style="font-size:1rem;background:#2A3D2E">👦</div>
-    <div class="proof-avatar" style="font-size:1rem;background:#243828">👧</div>
-    <div class="proof-avatar" style="font-size:1rem;background:#2A3D2E">🧑</div>
-    <div class="proof-avatar" style="font-size:1rem;background:#243828">👧🏽</div>
-    <div class="proof-avatar" style="font-size:1rem;background:#2A3D2E">👦🏻</div>
-    <div class="proof-avatar" style="background:var(--green);color:#060B08;font-size:0.58rem;font-weight:700;font-family:'DM Mono',monospace">+2.4k</div>
-  </div>
-  <div class="waitlist-count">
-    <span class="wl-dot"></span>
-    2,400+ teens already on the waitlist
-  </div>
-  <div class="proof-scrub" id="proofScrub2">
-    <div class="section-eyebrow" style="text-align:center">Early testers say</div>
-    <h2 class="section-title" style="text-align:center;max-width:680px;font-weight:600">"I finally understand what <em>my dad means</em><br>when he talks about the market."</h2>
-    <p class="section-sub" style="text-align:center;margin:14px auto 0">— Riya, 15, Delhi</p>
-  </div>
-</section>
 
 <!-- FINAL CTA — scroll-scrubbed glow + rise -->
 <section class="cta-section" id="ctaSection">
@@ -1835,15 +1817,7 @@
     document.getElementById('fill-2'),
   ];
 
-  // Each card's resting X offset when fully spread, relative to centre.
-  // Cards are flex children so their natural position IS the spread state.
-  // We start them all collapsed to the centre by translating them toward it,
-  // then animate those translations back to 0 as we scroll.
-  //
-  // Strategy: measure each card's centre offset from the row's centre,
-  // then apply an inverse translateX that shrinks to 0 as progress → 1.
-
-  let cardOffsets = [0, 0, 0]; // how far each card is from the row centre
+  let cardOffsets = [0, 0, 0];
 
   function measureOffsets() {
     const frame = document.getElementById('stackFrame');
@@ -1853,12 +1827,11 @@
     scards.forEach((card, i) => {
       const r = card.getBoundingClientRect();
       const cardCentreX = r.left + r.width / 2;
-      cardOffsets[i] = cardCentreX - frameCentreX; // positive = right of centre
+      cardOffsets[i] = cardCentreX - frameCentreX;
     });
   }
 
   function initSpread() {
-    // Before first measurement, collapse everything to centre
     scards.forEach(card => {
       card.style.transform = 'translateX(0px) translateY(20px)';
       card.style.opacity   = '0';
@@ -1867,63 +1840,54 @@
   }
   initSpread();
 
-  // Run measure after layout settles
   requestAnimationFrame(() => requestAnimationFrame(measureOffsets));
   window.addEventListener('resize', measureOffsets);
 
   function updateSpread(progress) {
-    // progress 0→1 across the full stackOuter scroll range
-    // Phase A (0→0.15): first card fades in from centre, no spread yet
-    // Phase B (0.15→0.55): cards 1 and 2 reveal and spread begins
-    // Phase C (0.55→1.0): all three fully spread, accent lines fill
-
     const N = scards.length;
 
     scards.forEach((card, i) => {
-      // Each card reveals at a staggered threshold
-      const revealAt  = i * 0.2;          // 0, 0.2, 0.4
-      const fullAt    = revealAt + 0.35;   // 0.35, 0.55, 0.75
+      const revealAt  = i * 0.2;
+      const fullAt    = revealAt + 0.35;
 
-      // local: 0 (not yet revealed) → 1 (fully in position)
       const local = Math.max(0, Math.min(1, (progress - revealAt) / (fullAt - revealAt)));
-
-      // easeOutCubic for snappy feel
       const eased = 1 - Math.pow(1 - local, 3);
 
-      // Translate from centre → final position
       const offset = cardOffsets[i] || 0;
-      const tx = offset * (eased - 1); // starts at -offset (at centre), ends at 0 (natural pos)
-      const ty = (1 - eased) * 40;     // subtle rise from below
+      const tx = offset * (eased - 1);
+      const ty = (1 - eased) * 40;
       const op = eased;
-      const sc = 0.88 + eased * 0.12;  // scale from 0.88 → 1.0
+      const sc = 0.88 + eased * 0.12;
 
       card.style.transform = `translateX(${tx}px) translateY(${ty}px) scale(${sc})`;
       card.style.opacity   = String(op);
 
-      // Top accent line fills as card settles
       sfills[i].style.width = (eased * 100) + '%';
     });
 
-    // Active dot: whichever card is most recently fully visible
     const active = Math.min(N - 1, Math.floor(progress * N * 1.1));
     sdots.forEach((d, i) => d.classList.toggle('active', i === active));
   }
 
   // ═══════════════════════════════════════════════════════
-  // EFFECT 2 — SCROLLYTELLING STORY (Sim Trading → Lessons)
-  // True scroll-driven timeline: the visual panel is CSS `position:sticky`
-  // (pinned in the viewport), and every property on it — which stage is
-  // showing, its opacity/scale/rotation, the badge drift, the progress
-  // rail — is a pure function of scroll position, recomputed every rAF
-  // tick. Nothing here is a one-shot "reveal"; scroll up and it reverses.
+  // EFFECT 2 — SCROLLYTELLING STORY
+  // Sim Trading → Lessons → Features → Proof, all pinned to one
+  // sticky visual panel. Every property is a pure function of the
+  // continuous "story progress" (0 → 3), recomputed every rAF tick.
   // ═══════════════════════════════════════════════════════
   const storyTrack   = document.getElementById('storyTrack');
   const storySteps   = [
     document.getElementById('story-step-0'),
     document.getElementById('story-step-1'),
+    document.getElementById('story-step-2'),
+    document.getElementById('story-step-3'),
   ];
   const stageSim      = document.getElementById('stageSim');
   const stageLesson   = document.getElementById('stageLesson');
+  const stageFeatures = document.getElementById('stageFeatures');
+  const stageProof    = document.getElementById('stageProof');
+  const stages        = [stageSim, stageLesson, stageFeatures, stageProof];
+  const stageNames    = ['SIM TRADING', 'LESSONS', 'FEATURES', 'PROOF'];
   const storyFill     = document.getElementById('storyProgressFill');
   const storyStageNum = document.getElementById('storyStageNum');
   const storyStageName= document.getElementById('storyStageName');
@@ -1931,52 +1895,50 @@
 
   function clamp01(v) { return Math.max(0, Math.min(1, v)); }
 
-  // How "in focus" a step is: 1 when its centre sits at the viewport
-  // centre, fading to 0 the further it drifts away. Continuous, not binary.
-  function stepFocus(el) {
-    if (!el) return 0;
-    const r  = el.getBoundingClientRect();
-    const vh = window.innerHeight;
-    const centreDist = Math.abs((r.top + r.height / 2) - vh / 2);
-    return clamp01(1 - centreDist / (vh * 0.6));
+  // Continuous position (0 → storySteps.length-1) of the viewport centre
+  // within the sequence of step centres — this drives everything below.
+  function computeStoryProgress() {
+    const centres = storySteps.map(el => {
+      const r = el.getBoundingClientRect();
+      return r.top + r.height / 2;
+    });
+    const vc = window.innerHeight / 2;
+    if (vc <= centres[0]) return 0;
+    for (let i = 0; i < centres.length - 1; i++) {
+      if (vc >= centres[i] && vc <= centres[i + 1]) {
+        const span = centres[i + 1] - centres[i];
+        const frac = span !== 0 ? (vc - centres[i]) / span : 0;
+        return i + frac;
+      }
+    }
+    return centres.length - 1;
   }
 
   function updateStory() {
     if (!storyTrack || isMobileStory()) return;
 
-    // — Per-step focus, driven purely by each step's own scroll position —
-    const focus0 = stepFocus(storySteps[0]);
-    const focus1 = stepFocus(storySteps[1]);
+    const progress = computeStoryProgress();
 
     storySteps.forEach((el, i) => {
-      if (!el) return;
-      const f = i === 0 ? focus0 : focus1;
+      const f = clamp01(1 - Math.abs(progress - i));
       el.style.opacity   = String(0.22 + f * 0.78);
       el.style.transform = `translateY(${(1 - f) * 18}px) scale(${0.98 + f * 0.02})`;
       el.style.filter    = `blur(${(1 - f) * 2}px)`;
     });
 
-    // — Crossfade between stages, weighted by which step currently has
-    //   more focus — the visual is literally coupled to the reading position —
-    const totalFocus = focus0 + focus1 + 0.0001;
-    const cp = clamp01(focus1 / totalFocus); // 0 = fully sim, 1 = fully lesson
+    stages.forEach((stage, i) => {
+      if (!stage) return;
+      const f = clamp01(1 - Math.abs(progress - i));
+      stage.style.opacity        = String(f);
+      stage.style.transform      = `scale(${0.92 + f * 0.08}) translateY(${(1 - f) * 26}px) rotateX(${(1 - f) * (i % 2 === 0 ? 6 : -6)}deg)`;
+      stage.style.pointerEvents  = f > 0.5 ? 'auto' : 'none';
+    });
 
-    if (stageSim) {
-      stageSim.style.opacity   = String(1 - cp);
-      stageSim.style.transform = `scale(${1 - cp * 0.08}) translateY(${-cp * 26}px) rotateX(${cp * 6}deg)`;
-      stageSim.style.pointerEvents = cp > 0.5 ? 'none' : 'auto';
-    }
-    if (stageLesson) {
-      stageLesson.style.opacity   = String(cp);
-      stageLesson.style.transform = `scale(${0.92 + cp * 0.08}) translateY(${(1 - cp) * 26}px) rotateX(${(1 - cp) * -6}deg)`;
-      stageLesson.style.pointerEvents = cp > 0.5 ? 'auto' : 'none';
-    }
-    if (storyStageNum)  storyStageNum.textContent  = cp > 0.5 ? '02' : '01';
-    if (storyStageName) storyStageName.textContent = cp > 0.5 ? 'LESSONS' : 'SIM TRADING';
+    const activeIdx = Math.max(0, Math.min(stages.length - 1, Math.round(progress)));
+    if (storyStageNum)  storyStageNum.textContent  = String(activeIdx + 1).padStart(2, '0');
+    if (storyStageName) storyStageName.textContent = stageNames[activeIdx];
 
-    // — Overall track progress (0 entering → 1 leaving), drives the rail
-    //   fill and a very small parallax drift on the floating badges even
-    //   while the sticky panel itself is pinned in place —
+    // Rail fill + gentle badge drift, still based on overall track scroll
     const rect  = storyTrack.getBoundingClientRect();
     const viewH = window.innerHeight;
     const total = storyTrack.offsetHeight + viewH;
@@ -1985,7 +1947,7 @@
     if (storyFill) storyFill.style.height = (trackProgress * 100) + '%';
 
     if (pBadgeProfit && pBadgeXP) {
-      const drift = (trackProgress - 0.5) * 2; // -1 → 1 across the whole story
+      const drift = (trackProgress - 0.5) * 2;
       pBadgeProfit.style.transform = `translateY(${drift * -22}px)`;
       pBadgeXP.style.transform     = `translateY(${drift * -14}px)`;
     }
@@ -1995,40 +1957,8 @@
   const pBadgeXP     = document.getElementById('pBadgeXP');
 
   // ═══════════════════════════════════════════════════════
-  // EFFECT 3 — FEATURES: sequential scrub unlock (no observer)
+  // EFFECT 3 — CTA: lightweight scrub reveal
   // ═══════════════════════════════════════════════════════
-  const featuresGrid   = document.getElementById('featuresGrid');
-  const featureCards   = featuresGrid ? Array.from(featuresGrid.querySelectorAll('.feature-card')) : [];
-  const featuresUnlockedNum = document.getElementById('featuresUnlockedNum');
-  const featuresCounterFill = document.getElementById('featuresCounterFill');
-
-  function updateFeatures() {
-    if (!featuresGrid || !featureCards.length) return;
-    const gridRect = featuresGrid.getBoundingClientRect();
-    const viewH    = window.innerHeight;
-    // Base progress: 0 when grid top enters bottom of viewport, 1 when grid top nears 35% of viewport
-    const base = clamp01((viewH * 0.95 - gridRect.top) / (viewH * 0.6));
-
-    let unlocked = 0;
-    featureCards.forEach((card, i) => {
-      const revealAt = i * 0.1;
-      const fullAt   = revealAt + 0.45;
-      const local    = clamp01((base - revealAt) / (fullAt - revealAt));
-      const eased    = 1 - Math.pow(1 - local, 3);
-      card.style.opacity   = String(eased);
-      card.style.transform = `translateY(${(1 - eased) * 30}px) scale(${0.96 + eased * 0.04})`;
-      if (eased > 0.9) unlocked++;
-    });
-
-    if (featuresUnlockedNum) featuresUnlockedNum.textContent = String(unlocked);
-    if (featuresCounterFill) featuresCounterFill.style.width = (unlocked / featureCards.length * 100) + '%';
-  }
-
-  // ═══════════════════════════════════════════════════════
-  // EFFECT 4 — PROOF & CTA: lightweight scrub reveal
-  // ═══════════════════════════════════════════════════════
-  const proofScrub1 = document.getElementById('proofScrub1');
-  const proofScrub2 = document.getElementById('proofScrub2');
   const ctaSection   = document.getElementById('ctaSection');
   const ctaScrub     = document.getElementById('ctaScrub');
   const ctaGlow      = document.getElementById('ctaGlow');
@@ -2043,9 +1973,7 @@
     el.style.transform = `translateY(${(1 - eased) * 24}px)`;
   }
 
-  function updateProofAndCTA() {
-    scrubIn(proofScrub1, 0.95, 0.65);
-    scrubIn(proofScrub2, 0.9, 0.5);
+  function updateCTA() {
     scrubIn(ctaScrub, 0.95, 0.55);
     if (ctaSection && ctaGlow) {
       const r  = ctaSection.getBoundingClientRect();
@@ -2072,7 +2000,6 @@
   }
 
   function runScrollEffects() {
-    // — Card spread (untouched — the original card animation) —
     if (stackOuter) {
       const rect       = stackOuter.getBoundingClientRect();
       const outerH     = stackOuter.offsetHeight;
@@ -2083,20 +2010,13 @@
       updateSpread(progress);
     }
 
-    // — Scrollytelling story (sim ↔ lessons) —
     updateStory();
-
-    // — Features sequential unlock —
-    updateFeatures();
-
-    // — Proof + CTA —
-    updateProofAndCTA();
+    updateCTA();
   }
 
   window.addEventListener('scroll', onScroll, { passive: true });
   window.addEventListener('resize', runScrollEffects);
 
-  // Run once on load
   runScrollEffects();
 </script>
 </body>
