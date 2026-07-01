@@ -871,126 +871,11 @@
     *, *::before, *::after { animation: none !important; transition: none !important; }
   }
 
- @media (max-width: 768px) {
-    /* 1. Prevent global horizontal overflow */
-    body, html {
-        overflow-x: hidden;
-        width: 100%;
-    }
-
-    /* 2. Fix the Navigation layout stretching */
-    nav {
-        padding: 14px 20px !important;
-        width: 100%;
-        box-sizing: border-box;
-    }
-    .nav-links {
-        display: none; /* Keeps layout clean on mobile */
-    }
-
-    /* 3. Hero layout & form input optimization */
-    .hero {
-        flex-direction: column;
-        padding: 110px 20px 60px;
-        text-align: center;
-        gap: 30px;
-        min-height: auto;
-        width: 100%;
-    }
-    .waitlist-form, .cta-form {
-        flex-direction: column;
-        width: 100%;
-        max-width: 100%;
-        gap: 12px;
-    }
-    .waitlist-input, .waitlist-btn, .cta-input, .cta-btn {
-        width: 100% !important;
-    }
-
-    /* Prevent floating cards in hero visual from clipping screen edges */
-    .hero-visual {
-        width: 100%;
-        min-height: 400px;
-        overflow: hidden;
-    }
-    .float-card.card-portfolio {
-        right: 10px !important;
-        top: 20px;
-    }
-    .float-card.card-lesson {
-        left: 10px !important;
-        bottom: 20px;
-    }
-
-    /* 4. Split Grids & Features to Single Columns */
-    section {
-        padding: 60px 20px !important;
-        width: 100%;
-        box-sizing: border-box;
-    }
-    .sim-section, .lessons-section, .features-grid {
-        grid-template-columns: 1fr !important;
-        gap: 32px;
-        width: 100%;
-    }
-    .sim-section {
-        display: flex;
-        flex-direction: column-reverse;
-    }
-
-    /* 5. PRESTIGE MOBILE SCROLL STACK ANIMATION */
-    .stack-scroll-outer {
-        height: 300vh; /* Keeps the sticky scroll track length active */
-        width: 100%;
-    }
-    .stack-sticky {
-        position: sticky;
-        top: 0;
-        height: 100vh;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        padding: 0 20px;
-        width: 100%;
-        box-sizing: border-box;
-    }
-    .stack-frame {
-        position: relative;
-        width: 100%;
-        height: 70vh; /* Constrain height so everything stays visible */
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        padding: 0;
-        gap: 0; /* Remove horizontal gaps */
-    }
-    .scard {
-        position: absolute; /* Layer cards on top of each other */
-        width: 100% !important;
-        max-width: 100%;
-        height: 320px; /* Fixed height for consistency */
-        top: calc(50% - 160px); /* Perfectly center visually */
-        left: 0;
-        right: 0;
-        margin: 0 auto;
-        box-sizing: border-box;
-        transform-origin: center bottom;
-    }
-}
-    /* Hide desktop nav links on mobile to save space */
-    .nav-links {
-        display: none; 
-    }
-}
-
- @media (max-width: 768px) {
+@media (max-width: 768px) {
     /* ... keep your other mobile overrides for nav, hero, etc. ... */
 
-    /* 5. ADJUST HORIZONTAL SCROLL ANIMATION FOR MOBILE VIEWPORTS */
     .stack-scroll-outer {
-        height: 280vh; /* Keep the native JS scroll travel alive */
+        height: 200vh; /* Scaled down for mobile so you don't scroll forever */
         width: 100%;
     }
     .stack-sticky {
@@ -1001,24 +886,24 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        overflow: hidden; /* Ensure clipping doesn't break the body layer */
+        overflow: hidden;
         width: 100%;
     }
     .stack-frame {
         display: flex;
-        flex-direction: row !important; /* Force it to stay row-based for your JS */
-        width: auto; /* Let the track expand horizontally as designed */
-        max-width: none;
-        padding: 0 24px;
-        gap: 16px; /* Slightly tighter gap for phone screens */
+        flex-direction: row !important;
+        width: 100%;
+        max-width: 100%;
+        padding: 0 20px;
+        gap: 16px;
     }
     .scard {
-        flex-shrink: 0; /* Stop cards from compressing into tiny vertical lines */
-        width: 85vw !important; /* Make each card occupy a perfect chunk of the mobile screen */
-        max-width: 320px;
+        flex-shrink: 0;
+        width: 85vw !important; /* Forces cards to stay perfectly sized relative to the phone viewport */
+        max-width: 290px;
         height: auto;
-        min-height: 380px;
-        padding: 28px 24px;
+        min-height: 340px;
+        padding: 24px 20px;
     }
 }
  
@@ -1767,48 +1652,45 @@
     // Phase C (0.55→1.0): all three fully spread, accent lines fill
 
     const N = scards.length;
-
     scards.forEach((card, i) => {
-      // Each card reveals at a staggered threshold
-      const revealAt  = i * 0.2;          // 0, 0.2, 0.4
-      const fullAt    = revealAt + 0.35;   // 0.35, 0.55, 0.75
+        // Each card reveals at a staggered threshold
+        const revealAt = i * 0.2;      // 0, 0.2, 0.4
+        const fullAt   = revealAt + 0.35; // 0.35, 0.55, 0.75
 
-      // local: 0 (not yet revealed) → 1 (fully in position)
-      const local = Math.max(0, Math.min(1, (progress - revealAt) / (fullAt - revealAt)));
+        // local: 0 (not yet revealed) → 1 (fully in position)
+        const local = Math.max(0, Math.min(1, (progress - revealAt) / (fullAt - revealAt)));
 
-      // easeOutCubic for snappy feel
-      const eased = 1 - Math.pow(1 - local, 3);
+        // easeOutCubic for snappy feel
+        const eased = 1 - Math.pow(1 - local, 3);
 
-      // Translate from centre → final position
-      const offset = cardOffsets[i] || 0;
-      const tx = offset * (eased - 1); // starts at -offset (at centre), ends at 0 (natural pos)
-      const ty = (1 - eased) * 40;     // subtle rise from below
-      const op = eased;
-      const sc = 0.88 + eased * 0.12;  // scale from 0.88 → 1.0
+        // Translate from centre → final position
+        const offset = cardOffsets[i] || 0;
+        const tx = offset * (eased - 1); // starts at -offset (at centre), ends at 0 (natural pos)
+        const ty = (1 - eased) * 40;     // subtle rise from below
+        const op = eased;
+        const sc = 0.88 + eased * 0.12;  // scale from 0.88 → 1.0
 
-      card.style.transform = `translateX(${tx}px) translateY(${ty}px) scale(${sc})`;
-      card.style.opacity   = String(op);
-
-      // Top accent line fills as card settles
-      sfills[i].style.width = (eased * 100) + '%';
+        card.style.transform = `translateX(${tx}px) translateY(${ty}px) scale(${sc})`;
+        card.style.opacity = op;
     });
 
-    // Active dot: whichever card is most recently fully visible
-    const active = Math.min(N - 1, Math.floor(progress * N * 1.1));
-    sdots.forEach((d, i) => d.classList.toggle('active', i === active));
-  }
+    // Accent progress lines filling up sequentially
+    sfills.forEach((fill, i) => {
+        // Line i fills up while progress goes from (0.1 + i*0.25) to (0.35 + i*0.25)
+        const start = 0.1 + i * 0.25;
+        const end   = 0.35 + i * 0.25;
+        const p = Math.max(0, Math.min(1, (progress - start) / (end - start)));
+        fill.style.width = `${p * 100}%`;
+    });
 
-  // ═══════════════════════════════════════════════════════
-  // EFFECT 2 — 2.5D PARALLAX on Sim Portfolio
-  // ═══════════════════════════════════════════════════════
-  const simWrap      = document.getElementById('simParallaxWrap');
-  const pBadgeProfit = document.getElementById('pBadgeProfit');
-  const pBadgeXP     = document.getElementById('pBadgeXP');
-
-  function updateParallax() {
-    if (!simWrap || !pBadgeProfit || !pBadgeXP) return;
-    const rect  = simWrap.getBoundingClientRect();
-    const viewH = window.innerHeight;
+    // Update progress indicator dots
+    // Highlight whichever card zone we are currently "in"
+    const activeIdx = Math.min(Math.floor(progress * N), N - 1);
+    sdots.forEach((dot, i) => {
+        if (i === activeIdx) dot.classList.add('active');
+        else dot.classList.remove('active');
+    });
+}
 
     // Skip if fully out of view
     if (rect.bottom < -100 || rect.top > viewH + 100) return;
