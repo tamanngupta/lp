@@ -1100,8 +1100,23 @@
       MintyBath is the sim trading app that teaches <strong>real investing skills</strong> to 11–17 year olds — with fake money, real Indian markets, and zero risk to actual savings.
     </p>
 
-    <iframe data-tally-src="https://tally.so/embed/pbMX0b?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1" loading="lazy" width="100%" height="177" frameborder="0" marginheight="0" marginwidth="0" title="Waitlist Sign-up"></iframe>
-<script>var d=document,w="https://tally.so/widgets/embed.js",v=function(){"undefined"!=typeof Tally?Tally.loadEmbeds():d.querySelectorAll("iframe[data-tally-src]:not([src])").forEach((function(e){e.src=e.dataset.tallySrc}))};if("undefined"!=typeof Tally)v();else if(d.querySelector('script[src="'+w+'"]')==null){var s=d.createElement("script");s.src=w,s.onload=v,s.onerror=v,d.body.appendChild(s);}</script>
+<div class="hero-content">
+  <!-- THE BADGE THAT WILL FLOAT +1 -->
+  <div class="hero-badge">
+    <span class="badge-dot"></span> Waitlist now open · <span class="waitlist-count"><strong>2,400</strong>+ teens joined</span>
+  </div>
+  
+  <h1 class="hero-headline">Grow your <em>first <br> portfolio</em> before <br> your first <span class="gold">paycheck.</span></h1>
+  <p class="hero-sub">MintyBath is the sim trading app that teaches <strong>real investing skills</strong> to 11–17 year olds — with fake money, real Indian markets, and zero risk to actual savings.</p>
+  
+  <!-- REVERTED INTERACTIVE HERO INPUT BOX -->
+  <div class="waitlist-form">
+    <input type="email" class="waitlist-input" placeholder="Enter your email address" required>
+    <button class="waitlist-btn" onclick="scrollToWaitlist()">Join Waitlist</button>
+  </div>
+
+  <div class="hero-stats">
+    <!-- Rest of your stats stay the same... -->
     <div class="hero-stats">
       <div>
         <span class="stat-num" data-count="2400" data-suffix="+" data-prefix="">2,400+</span>
@@ -1577,18 +1592,15 @@
 </section>
 
 
-<!-- FINAL CTA — scroll-scrubbed glow + rise -->
-<section class="cta-section" id="ctaSection">
-  <div class="cta-glow" id="ctaGlow"></div>
-  <div class="cta-scrub" id="ctaScrub">
-    <h2 class="cta-headline">Your portfolio<br>starts <em>today.</em></h2>
-    <p class="cta-sub">Join the waitlist. Be first when MintyBath launches. It's free forever for early signups.</p>
-    <div class="cta-form">
-      <input type="email" class="cta-input" id="cta-email" placeholder="your@email.com">
-      <button class="cta-btn" onclick="joinWaitlist('cta')">Join waitlist →</button>
-    </div>
-    <p style="font-size:0.72rem;color:var(--muted);margin-top:14px;position:relative;z-index:1;font-weight:400">No spam ever. We'll email you when we launch — that's it.</p>
-  </div>
+<!-- FINAL CTA SECTION -->
+<section class="cta-section" id="cta-waitlist">
+  <div class="cta-glow"></div>
+  <h2 class="section-title cta-scrub">Build your <em>portfolio</em> today.</h2>
+  <p class="section-sub cta-scrub" style="margin: 0 auto 40px;">Secure your spot on the waitlist and get early access to the simulation platform before anyone else.</p>
+  
+  <!-- PLUG IN THE TALLY EMBED HERE -->
+  <iframe data-tally-src="https://tally.so/embed/pbMX0b?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1" loading="lazy" width="100%" height="282" frameborder="0" marginheight="0" marginwidth="0" title="Waitlist Sign-up"></iframe>
+  <script>var d=document,w="https://tally.so/widgets/embed.js",v=function(){"undefined"!=typeof Tally?Tally.loadEmbeds():d.querySelectorAll("iframe[data-tally-src]:not([src])").forEach((function(e){e.src=e.dataset.tallySrc}))};if("undefined"!=typeof Tally)v();else if(d.querySelector('script[src="'+w+'"]')==null){var s=d.createElement("script");s.src=w,s.onload=v,s.onerror=v,d.body.appendChild(s);}</script>
 </section>
 
 
@@ -2015,6 +2027,32 @@
   window.addEventListener('resize', runScrollEffects);
 
   runScrollEffects();
+
+ function scrollToWaitlist() {
+  // 1. Trigger the fun +1 animation & update counter immediately
+  const countEl = document.querySelector('.waitlist-count strong');
+  if (countEl) {
+    let current = parseInt(countEl.innerText.replace(/,/g, '')) || 2400;
+    countEl.innerText = (current + 1).toLocaleString();
+    
+    // Create and shoot the floating +1 element
+    const plusOne = document.createElement('span');
+    plusOne.innerText = ' +1';
+    plusOne.style.cssText = 'position: absolute; color: #00FF87; font-weight: bold; font-family: monospace; animation: floatUp 0.8s ease-out forwards; margin-left: 5px;';
+    document.querySelector('.hero-badge').appendChild(plusOne);
+    
+    // Cleanup the animation element after it completes
+    setTimeout(() => plusOne.remove(), 800);
+  }
+
+  // 2. Smoothly glide down to the Tally form after a tiny delay
+  setTimeout(() => {
+    const target = document.getElementById('cta-waitlist');
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, 400); 
+}
 </script>
 </body>
 </html>
