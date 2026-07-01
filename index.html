@@ -1066,10 +1066,9 @@
 </head>
 <body>
 
-</div>
 <!-- NAV -->
 <nav id="nav">
-  
+  <a href="#" class="nav-logo">
     MintyBath
   </a>
   <ul class="nav-links">
@@ -1101,10 +1100,9 @@
     </p>
 
     <!-- ─── WAITLIST FORM ─── -->
-  <button type="submit" class="waitlist-btn" id="submitBtn">
-    Get early access →
-  </button>
-</form>
+      <button type="submit" class="waitlist-btn" id="hero-btn">
+        Get early access →
+      </button>
     <div class="hero-stats">
       <div>
         <span class="stat-num" data-count="2400" data-suffix="+" data-prefix="">2,400+</span>
@@ -1586,10 +1584,11 @@
   <div class="cta-scrub" id="ctaScrub">
     <h2 class="cta-headline">Your portfolio<br>starts <em>today.</em></h2>
     <p class="cta-sub">Join the waitlist. Be first when MintyBath launches. It's free forever for early signups.</p>
-    <div class="cta-form">
-      <input type="email" class="cta-input" id="cta-email" placeholder="your@email.com">
-      <button class="cta-btn" onclick="joinWaitlist('cta')">Join waitlist →</button>
-    </div>
+    <form class="cta-form" id="cta-form" onsubmit="event.preventDefault(); joinWaitlist('cta');">
+      <input type="text" class="cta-input" id="cta-name" placeholder="Your name" required>
+      <input type="email" class="cta-input" id="cta-email" placeholder="your@email.com" required>
+      <button type="submit" class="cta-btn">Join waitlist →</button>
+    </form>
     <p style="font-size:0.72rem;color:var(--muted);margin-top:14px;position:relative;z-index:1;font-weight:400">No spam ever. We'll email you when we launch — that's it.</p>
   </div>
 </section>
@@ -1642,7 +1641,7 @@
     <span class="ticker-item"><span class="ticker-sym">BAJFINANCE</span><span class="tick-down">▼ −0.7%</span><span class="ticker-divider"></span></span>
     <span class="ticker-item"><span class="ticker-sym">PAYTM</span><span class="tick-up">▲ +5.2%</span><span class="ticker-divider"></span></span>
     <span class="ticker-item"><span class="ticker-sym">ITC</span><span class="tick-up">▲ +1.1%</span><span class="ticker-divider"></span></span>
-    <span class="ticker-item"><span class="ticker-sym">NIFTY 50</span><span class="tick-up">▲ +0.8%</span><<span class="ticker-divider"></span></span>
+    <span class="ticker-item"><span class="ticker-sym">NIFTY 50</span><span class="tick-up">▲ +0.8%</span><span class="ticker-divider"></span></span>
   </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
@@ -1720,6 +1719,18 @@
   function joinWaitlist(source) {
     const emailId = source === 'hero' ? 'hero-email' : 'cta-email';
     const email = document.getElementById(emailId).value.trim();
+
+    if (source === 'cta') {
+      const nameInput = document.getElementById('cta-name');
+      const name = nameInput.value.trim();
+      if (!name) {
+        nameInput.style.borderColor = 'var(--red)';
+        nameInput.style.boxShadow = '0 0 0 3px rgba(255,84,84,0.12)';
+        setTimeout(() => { nameInput.style.borderColor = ''; nameInput.style.boxShadow = ''; }, 1800);
+        return;
+      }
+    }
+
     if (!email || !email.includes('@')) {
       const inp = document.getElementById(emailId);
       inp.style.borderColor = 'var(--red)';
@@ -1736,6 +1747,7 @@
       btn.textContent = 'You\'re on the list!';
       btn.style.background = 'var(--mint)';
       btn.style.pointerEvents = 'none';
+      document.getElementById('cta-name').value = '';
     }
     document.getElementById(emailId).value = '';
     showToast('+1 on the list');
