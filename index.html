@@ -774,7 +774,7 @@
   .cta-section {
     background: var(--bg);
     display: flex; flex-direction: column; align-items: center;
-    text-align: center; padding: 120px 56px 140px;
+    text-align: center; padding: 100px 56px 120px;
     position: relative; overflow: hidden;
   }
   .cta-glow {
@@ -786,27 +786,28 @@
     opacity: 0.3;
     will-change: opacity, transform;
   }
-  .cta-scrub { opacity: 0; transform: translateY(26px); will-change: opacity, transform; }
+  .cta-scrub { opacity: 0; transform: translateY(26px); will-change: opacity, transform; max-width: 460px; width: 100%; }
   .cta-headline {
     font-family: 'Fraunces', serif;
-    font-size: clamp(2.4rem, 4.5vw, 4rem);
-    font-weight: 600; line-height: 1.02;
-    letter-spacing: -0.03em; margin-bottom: 20px;
+    font-size: clamp(2.1rem, 3.6vw, 3.1rem);
+    font-weight: 600; line-height: 1.05;
+    letter-spacing: -0.03em; margin-bottom: 16px;
     position: relative; z-index: 1;
   }
   .cta-headline em { font-style: italic; color: var(--green); }
   .cta-sub {
-    font-size: 0.95rem; color: var(--muted); max-width: 440px;
-    line-height: 1.75; margin-bottom: 44px;
+    font-size: 0.9rem; color: var(--muted); max-width: 400px;
+    line-height: 1.7; margin: 0 auto 32px;
     position: relative; z-index: 1; font-weight: 400;
   }
   .cta-form {
-    display: flex; gap: 10px; max-width: 440px; width: 100%;
+    display: flex; flex-direction: column; gap: 10px; max-width: 380px; width: 100%;
+    margin: 0 auto;
     position: relative; z-index: 1;
   }
   .cta-input {
-    flex: 1; background: var(--card); border: 1px solid var(--border);
-    color: var(--white); padding: 14px 18px; border-radius: 10px;
+    width: 100%; background: var(--card); border: 1px solid var(--border);
+    color: var(--white); padding: 13px 16px; border-radius: 10px;
     font-family: 'DM Sans', sans-serif; font-size: 0.875rem;
     outline: none; transition: border-color 0.2s, box-shadow 0.2s;
   }
@@ -817,12 +818,13 @@
   .cta-input::placeholder { color: var(--muted); }
   .cta-btn {
     background: var(--green); color: #060B08; border: none;
-    padding: 14px 26px; border-radius: 10px;
+    padding: 13px 26px; border-radius: 10px;
     font-family: 'DM Sans', sans-serif; font-weight: 600;
-    font-size: 0.875rem; cursor: pointer;
+    font-size: 0.875rem; cursor: pointer; width: 100%;
     transition: transform 0.15s, box-shadow 0.2s;
   }
   .cta-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,255,135,0.38); }
+  .cta-note { font-size: 0.72rem; color: var(--muted); margin-top: 14px; position: relative; z-index: 1; font-weight: 400; }
 
   /* ─── FOOTER ─── */
   footer {
@@ -1020,14 +1022,7 @@
 @media (max-width: 768px) {
     /* Responsive Call-to-Action container */
     .cta-section {
-        padding: 80px 20px;
-    }
-    .cta-form {
-        flex-direction: column;
-        gap: 12px;
-    }
-    .cta-input, .cta-btn {
-        width: 100%;
+        padding: 70px 20px 90px;
     }
 }
 
@@ -1060,6 +1055,35 @@
   z-index: -1; /* Sits perfectly behind the mockup */
   pointer-events: none;
   filter: blur(40px);
+}
+
+ .hero-cta{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+
+    background:var(--green);
+    color:#060B08;
+
+    border:none;
+    border-radius:10px;
+
+    padding:15px 28px;
+
+    font-size:.95rem;
+    font-weight:600;
+
+    cursor:pointer;
+
+    transition:.2s;
+    box-shadow:0 8px 28px rgba(0,255,135,.22);
+
+    margin-bottom:36px;   /* space before stats */
+}
+
+.hero-cta:hover{
+    transform:translateY(-2px);
+    box-shadow:0 14px 36px rgba(0,255,135,.35);
 }
  
 </style>
@@ -1100,7 +1124,9 @@
     </p>
 
     <!-- ─── WAITLIST FORM ─── -->
-   <button class="nav-cta" onclick="scrollToWaitlist()">Get early access &rarr;</button>
+   <button class="hero-cta" onclick="scrollToWaitlist()">
+    Get early access →
+</button>
    <div class="hero-stats">
       <div>
         <span class="stat-num" data-count="2400" data-suffix="+" data-prefix="">2,400+</span>
@@ -1587,7 +1613,7 @@
       <input type="email" class="cta-input" id="cta-email" placeholder="your@email.com" required>
       <button type="submit" class="cta-btn">Join waitlist →</button>
     </form>
-    <p style="font-size:0.72rem;color:var(--muted);margin-top:14px;position:relative;z-index:1;font-weight:400">No spam ever. We'll email you when we launch — that's it.</p>
+    <p class="cta-note">No spam ever. We'll email you when we launch — that's it.</p>
   </div>
 </section>
 
@@ -1706,11 +1732,15 @@
     }, 1100);
   })();
 
-  // Waitlist scroll
+  // Waitlist scroll — sends user straight to the final CTA section and focuses the name field
   function scrollToWaitlist() {
-    const el = document.getElementById('hero-email');
+    const el = document.getElementById('ctaSection');
+    if (!el) return;
     el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    setTimeout(() => el.focus(), 600);
+    setTimeout(() => {
+      const nameInput = document.getElementById('cta-name');
+      if (nameInput) nameInput.focus();
+    }, 600);
   }
 
   // Join waitlist
