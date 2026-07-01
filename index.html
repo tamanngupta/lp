@@ -1701,7 +1701,16 @@
       if (error) throw error;
 
       // 4. Success state (Resets inputs and shows confirmation without breaking layout)
-      submitBtn.innerText = 'Added! 🎉';
+     if (btn) {
+  btn.textContent = "You're on the list!";
+  btn.style.background = 'var(--mint)';
+  btn.style.pointerEvents = 'none';
+}
+
+if (nameInput) nameInput.value = '';
+if (emailInput) emailInput.value = '';
+
+showToast('+1 on the list');
       nameInput.value = '';
       emailInput.value = '';
       
