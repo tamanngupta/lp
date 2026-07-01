@@ -476,38 +476,44 @@
   .stack-end-pad { height: 80px; background: var(--bg2); }
 
   /* ─── SIM TRADING — 2.5D PARALLAX ─── */
-  /* --- New Layout Structure for .sim-section --- */
+/* --- New Layout Structure for .sim-section --- */
 .sim-section {
-  display: block; /* Ditch the 1fr 1fr grid split */
   position: relative;
   width: 100%;
-  height: 100%;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  background-color: var(--bg);
+  overflow: hidden; /* Stops floating badges from breaking your horizontal scrollbars */
 }
 
-/* Create a central workspace container where things can overlap */
+/* Create a structured central canvas where elements safely live side-by-side */
 .sim-canvas-inner {
   position: relative;
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
-  min-height: 80vh;
-  display: flex;
+  padding: 0 4%;
+  display: grid;
+  grid-template-columns: 1fr 1.2fr; /* Explicitly forces a balanced 2-column channel split */
+  gap: 80px;
   align-items: center;
 }
 
-/* Shift your copy slightly to the left, but let it sit on a layer *below* the floating badges */
+/* Left side text column container */
 .sim-content {
-  max-width: 450px;
   position: relative;
-  z-index: 2;
+  z-index: 5;
 }
 
-/* Allow the mockup to float dynamically behind or to the side without rigid column locks */
+/* Right side graphic wrapper — stays locked inside its grid column slot */
 .sim-parallax-wrap {
-  position: absolute;
-  right: 0;
-  width: 55%;
-  z-index: 1;
+  position: relative;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2;
 }
   /* Floating parallax badges — sit above the card, move faster on scroll */
   .parallax-badge {
