@@ -986,103 +986,39 @@
 }
 
  @media (max-width: 768px) {
-    .hero {
-        flex-direction: column;
-        padding: 100px 20px 60px;
-        text-align: center;
-        gap: 30px;
-        min-height: auto;
+    /* ... keep your other mobile overrides for nav, hero, etc. ... */
+
+    /* 5. ADJUST HORIZONTAL SCROLL ANIMATION FOR MOBILE VIEWPORTS */
+    .stack-scroll-outer {
+        height: 280vh; /* Keep the native JS scroll travel alive */
+        width: 100%;
     }
-    .hero-content {
-        max-width: 100%;
+    .stack-sticky {
+        position: sticky;
+        top: 0;
+        height: 100vh;
         display: flex;
         flex-direction: column;
         align-items: center;
-    }
-    .hero-sub {
-        max-width: 100%;
-    }
-    /* Stack the email form inputs vertically */
-    .waitlist-form {
-        flex-direction: column;
-        width: 100%;
-        max-width: 100%;
-        gap: 12px;
-    }
-    .waitlist-input, .waitlist-btn {
-        width: 100%;
-    }
-    /* Adjust counter stats alignment */
-    .hero-stats {
         justify-content: center;
-        gap: 20px;
-    }
-    /* Contain the absolute floating badge cards so they don't break viewport width */
-    .hero-visual {
+        overflow: hidden; /* Ensure clipping doesn't break the body layer */
         width: 100%;
-        min-height: 380px;
-    }
-    .float-card.card-portfolio {
-        right: 10px;
-        top: 0;
-    }
-    .float-card.card-lesson {
-        left: 10px;
-        bottom: 10px;
-    }
-}
-
- @media (max-width: 768px) {
-    section {
-        padding: 60px 20px;
-    }
-    
-    .sim-section, .lessons-section {
-        grid-template-columns: 1fr;
-        gap: 40px;
-    }
-    
-    /* Flip order if you want text to stay on top of the UI element on mobile */
-    .sim-section {
-        display: flex;
-        flex-direction: column-reverse;
-    }
-}
-@media (max-width: 768px) {
-    /* Collapse feature list cards to single rows */
-    .features-grid {
-        grid-template-columns: 1fr;
-        gap: 16px;
-    }
-    
-    /* Responsive Call-to-Action container */
-    .cta-section {
-        padding: 80px 20px;
-    }
-    .cta-form {
-        flex-direction: column;
-        gap: 12px;
-    }
-    .cta-input, .cta-btn {
-        width: 100%;
-    }
-}
-
- @media (max-width: 768px) {
-    .stack-scroll-outer {
-        height: auto; /* Turn off artificial scroll heights */
-    }
-    .stack-sticky {
-        position: relative;
-        height: auto;
-        padding: 40px 0;
     }
     .stack-frame {
-        flex-direction: column;
-        padding: 0;
+        display: flex;
+        flex-direction: row !important; /* Force it to stay row-based for your JS */
+        width: auto; /* Let the track expand horizontally as designed */
+        max-width: none;
+        padding: 0 24px;
+        gap: 16px; /* Slightly tighter gap for phone screens */
     }
     .scard {
-        width: 100%;
+        flex-shrink: 0; /* Stop cards from compressing into tiny vertical lines */
+        width: 85vw !important; /* Make each card occupy a perfect chunk of the mobile screen */
+        max-width: 320px;
+        height: auto;
+        min-height: 380px;
+        padding: 28px 24px;
     }
 }
  
