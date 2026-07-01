@@ -476,21 +476,39 @@
   .stack-end-pad { height: 80px; background: var(--bg2); }
 
   /* ─── SIM TRADING — 2.5D PARALLAX ─── */
-  .sim-section {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 72px;
-    align-items: center;
-    position: relative;
-  }
-  /* Wrap holds frame + floating badges, enabling relative stacking */
-  .sim-parallax-wrap {
-    position: relative;
-  }
-  .sim-ui {
-    background: var(--card); border: 1px solid var(--border);
-    border-radius: 18px; overflow: hidden;
-    position: relative; z-index: 1;
-    will-change: transform;
-  }
+  /* --- New Layout Structure for .sim-section --- */
+.sim-section {
+  display: block; /* Ditch the 1fr 1fr grid split */
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+/* Create a central workspace container where things can overlap */
+.sim-canvas-inner {
+  position: relative;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
+}
+
+/* Shift your copy slightly to the left, but let it sit on a layer *below* the floating badges */
+.sim-content {
+  max-width: 450px;
+  position: relative;
+  z-index: 2;
+}
+
+/* Allow the mockup to float dynamically behind or to the side without rigid column locks */
+.sim-parallax-wrap {
+  position: absolute;
+  right: 0;
+  width: 55%;
+  z-index: 1;
+}
   /* Floating parallax badges — sit above the card, move faster on scroll */
   .parallax-badge {
     position: absolute;
@@ -984,11 +1002,25 @@
         width: 100%;
     }
 }
+
+ .sim-glow-radial {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 120%; /* Bigger than the mockup itself */
+  height: 120%;
+  background: radial-gradient(circle, rgba(46, 213, 115, 0.15) 0%, rgba(0, 0, 0, 0) 70%);
+  z-index: -1; /* Sits perfectly behind the mockup */
+  pointer-events: none;
+  filter: blur(40px);
+}
  
 </style>
 </head>
 <body>
 
+</div>
 <!-- NAV -->
 <nav id="nav">
   
@@ -1255,9 +1287,10 @@
         </div>
       </div>
 
-    </div><!-- /sim-parallax-wrap -->
+</div><!-- /sim-parallax-wrap (This closes the mockup side completely) -->
 
-    <div class="reveal-right" style="transition-delay:0.1s">
+    <!-- LEFT SIDE: Text Content stays structural and separate -->
+    <div class="sim-content">
       <div class="section-eyebrow">Sim Trading</div>
       <h2 class="section-title">Real stocks.<br><em>Zero risk.</em></h2>
       <p class="section-sub" style="margin-bottom:26px">
@@ -1282,8 +1315,9 @@
         </li>
       </ul>
     </div>
-  </div>
-</section>
+
+  </div> <!-- Closes .sim-canvas-inner -->
+</section> <!-- Closes #features -->
 
 <!-- LESSONS -->
 <section id="lessons" style="background:var(--bg2)">
@@ -1517,6 +1551,8 @@
     <span class="ticker-item"><span class="ticker-sym">NIFTY 50</span><span class="tick-up">▲ +0.8%</span><span class="tick-price">24,812</span><span class="ticker-divider"></span></span>
   </div>
 </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 
 <script>
   // ── Nav scroll shrink
