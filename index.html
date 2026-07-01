@@ -1608,7 +1608,7 @@
   <div class="cta-scrub" id="ctaScrub">
     <h2 class="cta-headline">Your portfolio<br>starts <em>today.</em></h2>
     <p class="cta-sub">Join the waitlist. Be first when MintyBath launches. It's free forever for early signups.</p>
-    <form class="cta-form" id="cta-form" onsubmit="event.preventDefault(); joinWaitlist('cta');">
+    <form class="cta-form" id="cta-form">
       <input type="text" class="cta-input" id="cta-name" placeholder="Your name" required>
       <input type="email" class="cta-input" id="cta-email" placeholder="your@email.com" required>
       <button type="submit" class="cta-btn">Join waitlist →</button>
@@ -1620,15 +1620,7 @@
 
 <!-- FOOTER -->
 <footer>
-  <div class="footer-logo">
-    <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-      <ellipse cx="11" cy="12" rx="7" ry="6.5" fill="#F5C540"/>
-      <circle cx="8.5" cy="11" r="1" fill="#060B08"/>
-      <circle cx="13.5" cy="11" r="1" fill="#060B08"/>
-      <path d="M9 14 Q11 15.5 13 14" stroke="#9A6010" stroke-width="1" stroke-linecap="round" fill="none"/>
-    </svg>
-    MintyBath
-  </div>
+  
   <div class="footer-copy">© 2026 MintyBath. All rights reserved.</div>
   <div class="footer-links">
     <a href="#">Privacy</a>
@@ -1670,7 +1662,15 @@
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+ <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+ <script>
+    const supabase = window.supabase.createClient(
+        "https://eoknpjxbjwkmctqqagwn.supabase.co",
+        "sb_publishable_Hu1zu06xY5veMvGo1kCPhg_yBrde5Sl"
+    );
 
+ 
+</script>
 <script>
   // ── Nav scroll shrink
   const nav = document.getElementById('nav');
@@ -1744,43 +1744,86 @@
   }
 
   // Join waitlist
-  function joinWaitlist(source) {
-    const emailId = source === 'hero' ? 'hero-email' : 'cta-email';
-    const email = document.getElementById(emailId).value.trim();
+async function joinWaitlist(source) {
+  const emailId = source === 'hero' ? 'hero-email' : 'cta-email';
+  const email = document.getElementById(emailId).value.trim();
 
-    if (source === 'cta') {
-      const nameInput = document.getElementById('cta-name');
-      const name = nameInput.value.trim();
-      if (!name) {
-        nameInput.style.borderColor = 'var(--red)';
-        nameInput.style.boxShadow = '0 0 0 3px rgba(255,84,84,0.12)';
-        setTimeout(() => { nameInput.style.borderColor = ''; nameInput.style.boxShadow = ''; }, 1800);
-        return;
-      }
-    }
+  let name = '';
 
-    if (!email || !email.includes('@')) {
-      const inp = document.getElementById(emailId);
-      inp.style.borderColor = 'var(--red)';
-      inp.style.boxShadow = '0 0 0 3px rgba(255,84,84,0.12)';
-      setTimeout(() => { inp.style.borderColor = ''; inp.style.boxShadow = ''; }, 1800);
+  if (source === 'cta') {
+    const nameInput = document.getElementById('cta-name');
+    name = nameInput.value.trim();
+
+    if (!name) {
+      nameInput.style.borderColor = 'var(--red)';
+      nameInput.style.boxShadow = '0 0 0 3px rgba(255,84,84,0.12)';
+      setTimeout(() => {
+        nameInput.style.borderColor = '';
+        nameInput.style.boxShadow = '';
+      }, 1800);
       return;
     }
-    if (source === 'hero') {
-      const btn = document.getElementById('hero-btn');
-      btn.textContent = 'You\'re on the list!';
-      btn.classList.add('success');
-    } else {
-      const btn = document.querySelector('.cta-btn');
-      btn.textContent = 'You\'re on the list!';
-      btn.style.background = 'var(--mint)';
-      btn.style.pointerEvents = 'none';
-      document.getElementById('cta-name').value = '';
-    }
-    document.getElementById(emailId).value = '';
-    showToast('+1 on the list');
   }
 
+  if (!email || !email.includes('@')) {
+    const inp = document.getElementById(emailId);
+    inp.style.borderColor = 'var(--red)';
+    inp.style.boxShadow = '0 0 0 3px rgba(255,84,84,0.12)';
+    setTimeout(() => {
+      inp.style.borderColor = '';
+      inp.style.boxShadow = '';
+    }, 1800);
+    return;
+  }
+
+  // Disable button while submitting
+  const btn =
+    source === 'hero'
+      ? document.getElementById('hero-btn')
+      : document.querySelector('.cta-btn');
+
+  const originalText = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'Joining...';
+
+  // Save to Supabase
+  const { error } = await supabase
+    .from('waitlist')
+    .insert([
+      {
+        name,
+        email
+      }
+    ]);
+
+  if (error) {
+    console.error(error);
+
+    if (error.code === '23505') {
+      showToast('You are already on the waitlist');
+    } else {
+      showToast('Something went wrong');
+    }
+
+    btn.disabled = false;
+    btn.textContent = originalText;
+    return;
+  }
+
+  // Success
+  if (source === 'hero') {
+    btn.textContent = "You're on the list!";
+    btn.classList.add('success');
+  } else {
+    btn.textContent = "You're on the list!";
+    btn.style.background = 'var(--mint)';
+    btn.style.pointerEvents = 'none';
+    document.getElementById('cta-name').value = '';
+  }
+
+  document.getElementById(emailId).value = '';
+  showToast('+1 on the list');
+}
   // ── Socratic lesson interaction
   let answered = false;
   function answerLesson(el, correct) {
@@ -2059,5 +2102,6 @@
 
   runScrollEffects();
 </script>
+
 </body>
 </html>
