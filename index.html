@@ -196,9 +196,14 @@
 
   /* ─── WAITLIST FORM ─── */
   .waitlist-form {
-    display: flex; gap: 10px; max-width: 440px; margin-bottom: 36px;
-    opacity: 0; transform: translateY(12px);
-    animation: slideUp 0.75s 0.75s forwards;
+  display: grid;              /* Changed parameter 1 */
+  gap: 10px; 
+  max-width: 320px;           /* Changed parameter 2 */
+  margin-bottom: 36px;
+  opacity: 0; 
+  transform: translateY(12px); 
+  animation: slideUp 0.75s 0.75s forwards; 
+}
   }
   .waitlist-input {
     flex: 1;
@@ -1586,10 +1591,11 @@
   <div class="cta-scrub" id="ctaScrub">
     <h2 class="cta-headline">Your portfolio<br>starts <em>today.</em></h2>
     <p class="cta-sub">Join the waitlist. Be first when MintyBath launches. It's free forever for early signups.</p>
-    <div class="cta-form">
-      <input type="email" class="cta-input" id="cta-email" placeholder="your@email.com">
-      <button class="cta-btn" onclick="joinWaitlist('cta')">Join waitlist →</button>
-    </div>
+    <form class="waitlist-form" id="waitlistForm">
+  <input type="text" id="userName" class="waitlist-input" placeholder="Your Name" required>
+  <input type="email" id="userEmail" class="waitlist-input" placeholder="your@email.com" required>
+  <button type="submit" class="waitlist-btn" id="submitBtn">Join waitlist →</button>
+</form>
     <p style="font-size:0.72rem;color:var(--muted);margin-top:14px;position:relative;z-index:1;font-weight:400">No spam ever. We'll email you when we launch — that's it.</p>
   </div>
 </section>
