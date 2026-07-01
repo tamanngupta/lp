@@ -476,45 +476,21 @@
   .stack-end-pad { height: 80px; background: var(--bg2); }
 
   /* ─── SIM TRADING — 2.5D PARALLAX ─── */
-/* --- New Layout Structure for .sim-section --- */
-.sim-section {
-  position: relative;
-  width: 100%;
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  background-color: var(--bg);
-  overflow: hidden; /* Stops floating badges from breaking your horizontal scrollbars */
-}
-
-/* Create a structured central canvas where elements safely live side-by-side */
-.sim-canvas-inner {
-  position: relative;
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 4%;
-  display: grid;
-  grid-template-columns: 1fr 1.2fr; /* Explicitly forces a balanced 2-column channel split */
-  gap: 80px;
-  align-items: center;
-}
-
-/* Left side text column container */
-.sim-content {
-  position: relative;
-  z-index: 5;
-}
-
-/* Right side graphic wrapper — stays locked inside its grid column slot */
-.sim-parallax-wrap {
-  position: relative;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 2;
-}
+  .sim-section {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 72px;
+    align-items: center;
+    position: relative;
+  }
+  /* Wrap holds frame + floating badges, enabling relative stacking */
+  .sim-parallax-wrap {
+    position: relative;
+  }
+  .sim-ui {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 18px; overflow: hidden;
+    position: relative; z-index: 1;
+    will-change: transform;
+  }
   /* Floating parallax badges — sit above the card, move faster on scroll */
   .parallax-badge {
     position: absolute;
@@ -896,12 +872,113 @@
   }
 
  @media (max-width: 768px) {
+    /* 1. Prevent global horizontal overflow */
+    body, html {
+        overflow-x: hidden;
+        width: 100%;
+    }
+
+    /* 2. Fix the Navigation layout stretching */
     nav {
-        padding: 14px 20px;
+        padding: 14px 20px !important;
+        width: 100%;
+        box-sizing: border-box;
     }
-    nav.scrolled {
-        padding: 10px 20px;
+    .nav-links {
+        display: none; /* Keeps layout clean on mobile */
     }
+
+    /* 3. Hero layout & form input optimization */
+    .hero {
+        flex-direction: column;
+        padding: 110px 20px 60px;
+        text-align: center;
+        gap: 30px;
+        min-height: auto;
+        width: 100%;
+    }
+    .waitlist-form, .cta-form {
+        flex-direction: column;
+        width: 100%;
+        max-width: 100%;
+        gap: 12px;
+    }
+    .waitlist-input, .waitlist-btn, .cta-input, .cta-btn {
+        width: 100% !important;
+    }
+
+    /* Prevent floating cards in hero visual from clipping screen edges */
+    .hero-visual {
+        width: 100%;
+        min-height: 400px;
+        overflow: hidden;
+    }
+    .float-card.card-portfolio {
+        right: 10px !important;
+        top: 20px;
+    }
+    .float-card.card-lesson {
+        left: 10px !important;
+        bottom: 20px;
+    }
+
+    /* 4. Split Grids & Features to Single Columns */
+    section {
+        padding: 60px 20px !important;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    .sim-section, .lessons-section, .features-grid {
+        grid-template-columns: 1fr !important;
+        gap: 32px;
+        width: 100%;
+    }
+    .sim-section {
+        display: flex;
+        flex-direction: column-reverse;
+    }
+
+    /* 5. PRESTIGE MOBILE SCROLL STACK ANIMATION */
+    .stack-scroll-outer {
+        height: 300vh; /* Keeps the sticky scroll track length active */
+        width: 100%;
+    }
+    .stack-sticky {
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 0 20px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    .stack-frame {
+        position: relative;
+        width: 100%;
+        height: 70vh; /* Constrain height so everything stays visible */
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 0;
+        gap: 0; /* Remove horizontal gaps */
+    }
+    .scard {
+        position: absolute; /* Layer cards on top of each other */
+        width: 100% !important;
+        max-width: 100%;
+        height: 320px; /* Fixed height for consistency */
+        top: calc(50% - 160px); /* Perfectly center visually */
+        left: 0;
+        right: 0;
+        margin: 0 auto;
+        box-sizing: border-box;
+        transform-origin: center bottom;
+    }
+}
     /* Hide desktop nav links on mobile to save space */
     .nav-links {
         display: none; 
@@ -1008,25 +1085,11 @@
         width: 100%;
     }
 }
-
- .sim-glow-radial {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 120%; /* Bigger than the mockup itself */
-  height: 120%;
-  background: radial-gradient(circle, rgba(46, 213, 115, 0.15) 0%, rgba(0, 0, 0, 0) 70%);
-  z-index: -1; /* Sits perfectly behind the mockup */
-  pointer-events: none;
-  filter: blur(40px);
-}
  
 </style>
 </head>
 <body>
 
-</div>
 <!-- NAV -->
 <nav id="nav">
   
@@ -1293,10 +1356,9 @@
         </div>
       </div>
 
-</div><!-- /sim-parallax-wrap (This closes the mockup side completely) -->
+    </div><!-- /sim-parallax-wrap -->
 
-    <!-- LEFT SIDE: Text Content stays structural and separate -->
-    <div class="sim-content">
+    <div class="reveal-right" style="transition-delay:0.1s">
       <div class="section-eyebrow">Sim Trading</div>
       <h2 class="section-title">Real stocks.<br><em>Zero risk.</em></h2>
       <p class="section-sub" style="margin-bottom:26px">
@@ -1321,9 +1383,8 @@
         </li>
       </ul>
     </div>
-
-  </div> <!-- Closes .sim-canvas-inner -->
-</section> <!-- Closes #features -->
+  </div>
+</section>
 
 <!-- LESSONS -->
 <section id="lessons" style="background:var(--bg2)">
@@ -1557,8 +1618,6 @@
     <span class="ticker-item"><span class="ticker-sym">NIFTY 50</span><span class="tick-up">▲ +0.8%</span><span class="tick-price">24,812</span><span class="ticker-divider"></span></span>
   </div>
 </div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 
 <script>
   // ── Nav scroll shrink
